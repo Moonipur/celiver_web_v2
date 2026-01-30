@@ -1,9 +1,9 @@
 import * as React from 'react'
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import { Eye, EyeOff, Loader2, UserPlus, Building2 } from 'lucide-react'
-import { Button } from '@frontend/components/ui/button'
-import { Input } from '@frontend/components/ui/input'
-import { Label } from '@frontend/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Card,
   CardContent,
@@ -11,8 +11,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@frontend/components/ui/card'
-import { createUser } from '@frontend/servers/user.functions'
+} from '@/components/ui/card'
+import { createUser } from '@/servers/user.functions'
 
 export const Route = createFileRoute('/register')({
   component: RegisterComponent,

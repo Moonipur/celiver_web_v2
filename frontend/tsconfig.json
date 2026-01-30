@@ -30,7 +30,7 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
-      "@frontend/*": ["../frontend/src/*"],
+      "@/*": ["../frontend/src/*"],
       "@backend/*": ["../backend/src/*"]
     }
   }
