@@ -4,7 +4,7 @@ import {
   CaseSchema,
   CaseUpdateClinSchema,
   CaseUpdateSchema,
-} from "@/schemas/case.schema";
+} from "@backend/schemas/case.schema";
 
 export const CaseValidator = zValidator("json", CaseSchema, (result, c) => {
   if (!result.success) {

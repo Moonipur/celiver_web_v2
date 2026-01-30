@@ -1,0 +1,42 @@
+###
+GET http://localhost:3000/api/cases
+Origin: http://localhost:3000
+
+###
+GET http://localhost:3000/api/cases/CMI
+Origin: http://localhost:3000
+
+###
+GET http://localhost:3000/api/cases/latest/CMI
+Origin: http://localhost:3000
+
+###
+GET http://localhost:3000/api/cases/clin/CMI
+Origin: http://localhost:3000
+
+###
+POST http://localhost:3000/api/cases/create
+Origin: http://localhost:3000
+Content-Type: application/json
+
+[{
+  "hospitalId": "1c651b7c-6ce5-4b8b-866e-c1daf6413cbe",
+  "hospitalCode": "CMI00002",
+  "biobankCode": "E100002",
+  "age": 64,
+  "sex": "female"
+}]
+
+###
+POST http://localhost:3000/api/cases/update/CMI
+Origin: http://localhost:3000
+Content-Type: application/json
+
+{
+  "biobankCode": "E100001",
+  "sex": "male"
+}
+
+###
+DELETE http://localhost:3000/api/cases/delete/d7ebb98a-f8b3-4fcc-a9a4-611f44275270
+Origin: http://localhost:3000

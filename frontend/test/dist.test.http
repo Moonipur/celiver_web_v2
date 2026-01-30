@@ -1,0 +1,71 @@
+###
+GET http://localhost:3000/api/dists
+Origin: http://localhost:3000
+
+###
+GET http://localhost:3000/api/dists/f7d7355e-c2de-4cec-b225-16facbfe6006
+Origin: http://localhost:3000
+
+###
+POST http://localhost:3000/api/dists/create
+Origin: http://localhost:3000
+Content-Type: application/json
+
+[{
+    "sampleId": "f7d7355e-c2de-4cec-b225-16facbfe6006",
+    "bin1": 0.01, "bin2": 0.01, "bin3": 0.01, "bin4": 0.01, "bin5": 0.01, 
+    "bin6": 0.01, "bin7": 0.01, "bin8": 0.01, "bin9": 0.01, "bin10": 0.01, 
+    "bin11": 0.01, "bin12": 0.01, "bin13": 0.01, "bin14": 0.01, "bin15": 0.01, 
+    "bin16": 0.01, "bin17": 0.01, "bin18": 0.01, "bin19": 0.01, "bin20": 0.01
+},{
+    "sampleId": "f7d7355e-c2de-4cec-b225-16facbfe6006",
+    "bin1": 0.01, "bin2": 0.01, "bin3": 0.01, "bin4": 0.01, "bin5": 0.01, 
+    "bin6": 0.01, "bin7": 0.02, "bin8": 0.01, "bin9": 0.01, "bin10": 0.01, 
+    "bin11": 0.01, "bin12": 0.01, "bin13": 0.01, "bin14": 0.02, "bin15": 0.01, 
+    "bin16": 0.02, "bin17": 0.01, "bin18": 0.01, "bin19": 0.01, "bin20": 0.01
+}]
+
+###
+POST http://localhost:3000/api/dists/update
+Origin: http://localhost:3000
+Content-Type: application/json
+
+{
+    "id": "94cb1bd5-c4f6-4d57-a8ac-c3ae23946029",
+    "sampleId": "f7d7355e-c2de-4cec-b225-16facbfe6006",
+    "bin1": 1.01, "bin2": 0.01, "bin3": 0.01, "bin4": 0.01, "bin5": 0.01, 
+    "bin6": 0.01, "bin7": 0.01, "bin8": 0.01, "bin9": 0.01, "bin10": 0.01, 
+    "bin11": 0.01, "bin12": 0.01, "bin13": 0.01, "bin14": 0.01, "bin15": 0.01, 
+    "bin16": 0.01, "bin17": 0.01, "bin18": 0.01, "bin19": 5.671, "bin20": 0.01
+}
+
+###
+POST http://localhost:3000/api/dists/update-many
+Origin: http://localhost:3000
+Content-Type: application/json
+
+[{
+    "id": "0e3c64d9-d3d4-47f7-a0c3-b84053e6d26c",
+    "sampleId": "f7d7355e-c2de-4cec-b225-16facbfe6006",
+    "bin1": 100.01, "bin2": 0.01, "bin3": 0.01, "bin4": 0.01, "bin5": 0.01, 
+    "bin6": 0.01, "bin7": 1.23, "bin8": 0.01, "bin9": 0.01, "bin10": 0.01, 
+    "bin11": 0.01, "bin12": 0.01, "bin13": 0.01, "bin14": 0.01, "bin15": 0.01, 
+    "bin16": 0.01, "bin17": 0.01, "bin18": 0.01, "bin19": 5.671, "bin20": 0.01,
+    "passQC": false
+},{
+    "id": "d266ef6a-bc6c-4a13-9214-bc84b5fa4421",
+    "sampleId": "f7d7355e-c2de-4cec-b225-16facbfe6006", 
+    "bin1": 1.01, "bin2": 0.01, "bin3": 0.01, "bin4": 0.01, "bin5": 0.01, 
+    "bin6": 0.01, "bin7": 0.01, "bin8": 0.01, "bin9": 81.2, "bin10": 0.01, 
+    "bin11": 0.01, "bin12": 0.01, "bin13": 0.01, "bin14": 0.01, "bin15": 0.01, 
+    "bin16": 0.01, "bin17": 0.01, "bin18": 0.01, "bin19": 5.671, "bin20": 0.01,
+    "passQC": true
+}]
+
+###
+DELETE http://localhost:3000/api/dists/delete/d7ebb98a-f8b3-4fcc-a9a4-611f44275270
+Origin: http://localhost:3000
+
+###
+DELETE http://localhost:3000/api/dists/delete-sample/f7d7355e-c2de-4cec-b225-16facbfe6006
+Origin: http://localhost:3000

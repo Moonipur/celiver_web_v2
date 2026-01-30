@@ -1,6 +1,6 @@
-import { db } from "@/db/db";
-import { NewOrg } from "@/types";
-import { user, organization, member } from "@/db/schema";
+import { db } from "@backend/db/db";
+import { NewOrg } from "@backend/types";
+import { user, organization, member } from "@backend/db/schema";
 import { eq } from "drizzle-orm";
 
 export const getOrgDetail = async (orgSlug: string) => {

@@ -30,8 +30,8 @@
     "noUncheckedSideEffectImports": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@shared/*": ["../shared/*"]
+      "@frontend/*": ["../frontend/src/*"],
+      "@backend/*": ["../backend/src/*"]
     }
   }
 }

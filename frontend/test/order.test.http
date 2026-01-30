@@ -1,0 +1,37 @@
+###
+GET http://localhost:3000/api/orders
+Origin: http://localhost:3000
+
+###
+GET http://localhost:3000/api/orders/CMI
+Origin: http://localhost:3000
+
+###
+POST http://localhost:3000/api/orders/create
+Origin: http://localhost:3000
+
+###
+POST http://localhost:3000/api/orders/cancel
+Origin: http://localhost:3000
+Content-Type: application/json
+
+{
+    "id": "8b578929-2805-40e2-81a5-a3fc5de57b28",
+    "canceledNote": "Hemolysis"
+}
+
+###
+POST http://localhost:3000/api/orders/receive
+Origin: http://localhost:3000
+Content-Type: application/json
+
+{
+    "id": "8b578929-2805-40e2-81a5-a3fc5de57b28",
+    "receivedCheck": true,
+    "receivedNote": "Late 2 hrs"
+}
+
+
+###
+DELETE http://localhost:3000/api/orders/delete/d7ebb98a-f8b3-4fcc-a9a4-611f44275270
+Origin: http://localhost:3000

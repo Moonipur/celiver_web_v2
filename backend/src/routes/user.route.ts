@@ -3,10 +3,10 @@ import {
   clientRoleMiddleware,
   adminRoleMiddleware,
   clinAdminRoleMiddleware,
-} from "@/middlewares/role.middleware";
-import { updateUserRole } from "@/db/query/user.query";
-import type { HonoEnv } from "@/types";
-import { UserRoleValidator } from "@/validators/user.validator";
+} from "@backend/middlewares/role.middleware";
+import { updateUserRole } from "@backend/db/query/user.query";
+import type { HonoEnv } from "@backend/types";
+import { UserRoleValidator } from "@backend/validators/user.validator";
 
 export const users = new Hono<HonoEnv>();
 
