@@ -31,4 +31,7 @@ app
   .route("/api/samples", samples)
   .route("/api/dists", dists);
 
-export default app;
+export default {
+  port: 8000,
+  fetch: app.fetch,
+};
