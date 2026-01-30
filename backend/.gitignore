@@ -1,2 +1,11 @@
 # deps
 node_modules/
+
+# DB Migrations
+src/db/migrations/
+
+# Http testing
+test/*
+
+#Env
+.env
