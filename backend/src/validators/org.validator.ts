@@ -1,5 +1,5 @@
 import { zValidator } from "@hono/zod-validator";
-import { OrgMemberSchema, OrgSchema } from "@backend/schemas/org.schema";
+import { OrgMemberSchema, OrgSchema } from "@/schemas/org.schema";
 
 export const OrgValidator = zValidator("json", OrgSchema, (result, c) => {
   if (!result.success) {

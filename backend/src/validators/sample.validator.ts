@@ -5,7 +5,7 @@ import {
   SampleUpdateDataSchema,
   SampleUpdateDistSchema,
   SampleUpdateExtractSchema,
-} from "@backend/schemas/sample.schema";
+} from "@/schemas/sample.schema";
 
 export const SampleValidator = zValidator("json", SampleSchema, (result, c) => {
   if (!result.success) {

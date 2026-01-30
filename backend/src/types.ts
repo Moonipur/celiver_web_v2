@@ -6,29 +6,26 @@ import type {
   distributes,
   organization,
   user,
-} from "@backend/db/schema";
-import { auth } from "@backend/lib/auth";
+} from "@/db/schema";
+import { auth } from "@/lib/auth";
 import z from "zod";
-import {
-  OrderCancelSchema,
-  OrderReceiveSchema,
-} from "@backend/schemas/order.schema";
+import { OrderCancelSchema, OrderReceiveSchema } from "@/schemas/order.schema";
 import {
   CasesArraySchema,
   CaseUpdateClinSchema,
   CaseUpdateSchema,
-} from "@backend/schemas/case.schema";
+} from "@/schemas/case.schema";
 import {
   SamplesArraySchema,
   SampleUpdateDataSchema,
   SampleUpdateDistSchema,
   SampleUpdateExtractSchema,
-} from "@backend/schemas/sample.schema";
+} from "@/schemas/sample.schema";
 import {
   DistArraySchema,
   DistUpdateArraySchema,
   DistUpdateSchema,
-} from "@backend/schemas/dist.schema";
+} from "@/schemas/dist.schema";
 
 // Setting Hono Env
 export type HonoEnv = {

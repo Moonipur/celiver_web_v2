@@ -1,6 +1,6 @@
 import { createMiddleware } from "hono/factory";
-import { auth } from "@backend/lib/auth";
-import { HonoEnv } from "@backend/types";
+import { auth } from "@/lib/auth";
+import { HonoEnv } from "@/types";
 
 export const clientRoleMiddleware = createMiddleware<HonoEnv>(
   async (c, next) => {

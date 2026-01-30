@@ -1,11 +1,11 @@
-import { db } from "@backend/db/db";
+import { db } from "@/db/db";
 import {
   SamplesArray,
   UpdateDistSample,
   UpdateExtractSample,
   UpdateSample,
-} from "@backend/types";
-import { organization, cases, samples, orders } from "@backend/db/schema";
+} from "@/types";
+import { organization, cases, samples, orders } from "@/db/schema";
 import { and, asc, desc, eq, getTableColumns } from "drizzle-orm";
 
 export const getSamples = async () => {

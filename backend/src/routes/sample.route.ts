@@ -1,17 +1,17 @@
 import { Hono } from "hono";
-import { authMiddleware } from "@backend/middlewares/auth.middleware";
+import { authMiddleware } from "@/middlewares/auth.middleware";
 import {
   adminRoleMiddleware,
   clientRoleMiddleware,
   clinAdminRoleMiddleware,
-} from "@backend/middlewares/role.middleware";
-import type { HonoEnv } from "@backend/types";
+} from "@/middlewares/role.middleware";
+import type { HonoEnv } from "@/types";
 import {
   SamplesArrayValidator,
   SampleUpdateDataValidator,
   SampleUpdateDistValidator,
   SampleUpdateExtractValidator,
-} from "@backend/validators/sample.validator";
+} from "@/validators/sample.validator";
 import {
   addSamples,
   deleteSample,
@@ -22,7 +22,7 @@ import {
   updateSampleData,
   updateSampleDist,
   updateSampleExtract,
-} from "@backend/db/query/sample.query";
+} from "@/db/query/sample.query";
 
 export const samples = new Hono<HonoEnv>();
 

@@ -1,9 +1,9 @@
 import { Hono } from "hono";
-import { authMiddleware } from "@backend/middlewares/auth.middleware";
+import { authMiddleware } from "@/middlewares/auth.middleware";
 import {
   clientRoleMiddleware,
   adminRoleMiddleware,
-} from "@backend/middlewares/role.middleware";
+} from "@/middlewares/role.middleware";
 import {
   addCases,
   deleteCase,
@@ -13,13 +13,13 @@ import {
   getCases,
   updateCaseByBcode,
   validOrg,
-} from "@backend/db/query/case.query";
-import type { HonoEnv } from "@backend/types";
+} from "@/db/query/case.query";
+import type { HonoEnv } from "@/types";
 import {
   CaseUpdateClinValidator,
   CaseUpdateValidator,
   CasesArrayValidator,
-} from "@backend/validators/case.validator";
+} from "@/validators/case.validator";
 
 export const cases = new Hono<HonoEnv>();
 
