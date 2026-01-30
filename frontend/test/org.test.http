@@ -1,0 +1,41 @@
+###
+POST http://localhost:3000/api/orgs/create
+Origin: http://localhost:3000
+Content-Type: application/json
+
+{
+  "name": "Chiang Mai University",
+  "slug": "CMI",
+  "biobank": "E1",
+  "metadata": "Suandok Hospital"
+}
+
+###
+POST http://localhost:3000/api/orgs/info/CMI
+Origin: http://localhost:3000
+
+###
+POST http://localhost:3000/api/orgs/add-member
+Origin: http://localhost:3000
+Content-Type: application/json
+
+{
+  "email": "moo_sutthittha@hotmail.com",
+  "orgSlug": "CMI"
+}
+
+###
+POST http://localhost:3000/api/orgs/members/CMI
+Origin: http://localhost:3000
+
+###
+POST http://localhost:3000/api/orgs/update
+Origin: http://localhost:3000
+Content-Type: application/json
+
+{
+  "name": "Maharaj Nakorn Chiang Mai Hospital",
+  "slug": "CMI",
+  "biobank":"E1",
+  "metadata": "Chiang Mai University"
+}
