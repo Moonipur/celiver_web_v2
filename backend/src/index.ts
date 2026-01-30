@@ -1,9 +1,34 @@
-import { Hono } from 'hono'
+import { Hono } from "hono";
+import { auth } from "@/lib/auth";
+import { cors } from "hono/cors";
+import { users } from "@/routes/user.route";
+import { orgs } from "@/routes/org.route";
+import { orders } from "@/routes/order.route";
+import { cases } from "@/routes/case.route";
+import { samples } from "@/routes/sample.route";
+import { dists } from "@/routes/dist.route";
 
-const app = new Hono()
+const app = new Hono();
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
+app.use(
+  "/api/auth/*",
+  cors({
+    origin: process.env.BETTER_AUTH_URL!,
+    allowHeaders: ["Content-Type", "Authorization"],
+    allowMethods: ["POST", "GET", "OPTIONS"],
+    exposeHeaders: ["Content-Length"],
+    maxAge: 600,
+    credentials: true,
+  }),
+);
 
-export default app
+app
+  .on(["POST", "GET"], "/api/auth/*", (c) => auth.handler(c.req.raw))
+  .route("/api/users", users)
+  .route("/api/orgs", orgs)
+  .route("/api/orders", orders)
+  .route("/api/cases", cases)
+  .route("/api/samples", samples)
+  .route("/api/dists", dists);
+
+export default app;
