@@ -1,6 +1,6 @@
-import { db } from "@backend/db/db";
-import { Cancel, Receive } from "@backend/types";
-import { orders, member, organization } from "@backend/db/schema";
+import { db } from "@/db/db";
+import { Cancel, Receive } from "@/types";
+import { orders, member, organization } from "@/db/schema";
 import { desc, eq, getTableColumns } from "drizzle-orm";
 
 export const getOrders = async () => {

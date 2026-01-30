@@ -1,5 +1,5 @@
 import { zValidator } from "@hono/zod-validator";
-import { NewRoleSchema, UserSchema } from "@backend/schemas/user.schema";
+import { NewRoleSchema, UserSchema } from "@/schemas/user.schema";
 
 export const UserValidator = zValidator("json", UserSchema, (result, c) => {
   if (!result.success) {

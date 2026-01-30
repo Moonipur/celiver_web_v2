@@ -1,12 +1,12 @@
 import { Hono } from "hono";
-import { auth } from "@backend/lib/auth";
+import { auth } from "@/lib/auth";
 import { cors } from "hono/cors";
-import { users } from "@backend/routes/user.route";
-import { orgs } from "@backend/routes/org.route";
-import { orders } from "@backend/routes/order.route";
-import { cases } from "@backend/routes/case.route";
-import { samples } from "@backend/routes/sample.route";
-import { dists } from "@backend/routes/dist.route";
+import { users } from "@/routes/user.route";
+import { orgs } from "@/routes/org.route";
+import { orders } from "@/routes/order.route";
+import { cases } from "@/routes/case.route";
+import { samples } from "@/routes/sample.route";
+import { dists } from "@/routes/dist.route";
 
 const app = new Hono();
 

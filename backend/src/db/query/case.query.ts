@@ -1,6 +1,6 @@
-import { db } from "@backend/db/db";
-import { CasesArray, UpdateCase, UpdateClinCase } from "@backend/types";
-import { organization, cases } from "@backend/db/schema";
+import { db } from "@/db/db";
+import { CasesArray, UpdateCase, UpdateClinCase } from "@/types";
+import { organization, cases } from "@/db/schema";
 import { asc, desc, eq, getTableColumns } from "drizzle-orm";
 
 const { baselineDisease, ...rest } = getTableColumns(cases);

@@ -1,6 +1,6 @@
-import { db } from "@backend/db/db";
-import { UserRoleType } from "@backend/types";
-import { user } from "@backend/db/schema";
+import { db } from "@/db/db";
+import { UserRoleType } from "@/types";
+import { user } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const updateUserRole = async (

@@ -3,7 +3,7 @@ import {
   clientRoleMiddleware,
   adminRoleMiddleware,
   clinAdminRoleMiddleware,
-} from "@backend/middlewares/role.middleware";
+} from "@/middlewares/role.middleware";
 import {
   getOrgDetail,
   addNewOrg,
@@ -13,13 +13,10 @@ import {
   getOrgIdBySlug,
   getOrgIdByBcode,
   deleteOrg,
-} from "@backend/db/query/org.query";
-import type { HonoEnv } from "@backend/types";
-import {
-  OrgMemberValidator,
-  OrgValidator,
-} from "@backend/validators/org.validator";
-import { authMiddleware } from "@backend/middlewares/auth.middleware";
+} from "@/db/query/org.query";
+import type { HonoEnv } from "@/types";
+import { OrgMemberValidator, OrgValidator } from "@/validators/org.validator";
+import { authMiddleware } from "@/middlewares/auth.middleware";
 
 export const orgs = new Hono<HonoEnv>();
 

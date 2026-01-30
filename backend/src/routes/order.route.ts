@@ -1,10 +1,10 @@
 import { Hono } from "hono";
-import { authMiddleware } from "@backend/middlewares/auth.middleware";
+import { authMiddleware } from "@/middlewares/auth.middleware";
 import {
   clientRoleMiddleware,
   adminRoleMiddleware,
   clinAdminRoleMiddleware,
-} from "@backend/middlewares/role.middleware";
+} from "@/middlewares/role.middleware";
 import {
   getOrders,
   getOrderByOrgSlug,
@@ -12,13 +12,13 @@ import {
   cancelOrder,
   receiveOrder,
   deleteOrder,
-} from "@backend/db/query/order.query";
-import type { HonoEnv } from "@backend/types";
+} from "@/db/query/order.query";
+import type { HonoEnv } from "@/types";
 import {
   OrderCancelValidator,
   OrderReceiveValidator,
   OrderValidator,
-} from "@backend/validators/order.validator";
+} from "@/validators/order.validator";
 
 export const orders = new Hono<HonoEnv>();
 
