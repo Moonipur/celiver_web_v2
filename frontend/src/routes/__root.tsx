@@ -6,16 +6,15 @@ import {
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
-import Header from '@frontend/components/Header'
+import Header from '@/components/Header'
 
-import TanStackQueryDevtools from '@frontend/integrations/tanstack-query/devtools'
+import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools'
 
-import appCss from '@frontend/styles.css?url'
+import appCss from '@/styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
-import { NotFound } from '@frontend/components/NotFound'
-import { getSessionFn } from '@frontend/middlewares/auth.middleware'
-import { AuthResponse } from '@frontend/servers/types'
+import { NotFound } from '@/components/NotFound'
+import { AuthResponse } from '@/servers/types'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -23,12 +22,6 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-  loader: async () => {
-    const session = await getSessionFn()
-    return {
-      session,
-    }
-  },
   head: () => ({
     meta: [
       {
@@ -55,14 +48,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
-  const { session } = Route.useLoaderData()
-
   return (
     <html lang="en">
       <head>
         <HeadContent />
       </head>
-      <Header session={session} />
+      <Header />
       <body>
         {children}
         <TanStackDevtools

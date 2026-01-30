@@ -1,12 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from '@tanstack/react-router'
 import { Menu, X, Bell, Search, LogOut, User } from 'lucide-react'
-import { Button } from '@frontend/components/ui/button'
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@frontend/components/ui/avatar'
+import { Button } from '@/components/ui/button'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,8 +10,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@frontend/components/ui/dropdown-menu'
-import { SessionType } from '@frontend/servers/types'
+} from '@/components/ui/dropdown-menu'
+import { getSessionFn } from '@/servers/user.functions'
 
 const navLinks = [
   { to: '/', label: 'Home' },
@@ -24,17 +20,32 @@ const navLinks = [
   { to: '/about', label: 'About' },
 ]
 
-export default function Header({ session }: SessionType) {
+export default function Header() {
   const navigate = useNavigate()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(true)
-  const user = session?.user
+  const [userName, setUserName] = useState('')
+  const [userEmail, setUserEmail] = useState('')
 
-  if (session) {
-    setIsAuthenticated(true)
-  } else {
-    setIsAuthenticated(false)
-  }
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const data = await getSessionFn()
+
+        if (data?.user) {
+          setIsAuthenticated(true)
+          setUserName(data?.user?.name)
+          setUserEmail(data?.user?.email)
+        } else {
+          setIsAuthenticated(false)
+        }
+      } catch (err) {
+        setIsAuthenticated(false)
+      }
+    }
+
+    checkSession()
+  }, [])
 
   const handleLogout = () => {
     console.log('Logging out...')
@@ -48,7 +59,7 @@ export default function Header({ session }: SessionType) {
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
           {/* --- Logo --- */}
           <Link to="/" className="flex items-center gap-2 font-bold text-xl">
-            <span className="text-primary">MyApp</span>
+            <span className="text-primary">CEliver</span>
           </Link>
 
           {/* --- Desktop Navigation --- */}
@@ -106,10 +117,10 @@ export default function Header({ session }: SessionType) {
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">
-                          {user?.name}
+                          {userName}
                         </p>
                         <p className="text-xs leading-none text-muted-foreground">
-                          {user?.email}
+                          {userEmail}
                         </p>
                       </div>
                     </DropdownMenuLabel>
