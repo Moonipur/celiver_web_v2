@@ -9,26 +9,23 @@ import type {
 } from "@/db/schema";
 import { auth } from "@/lib/auth";
 import z from "zod";
-import {
-  OrderCancelSchema,
-  OrderReceiveSchema,
-} from "@shared/schemas/order.schema";
+import { OrderCancelSchema, OrderReceiveSchema } from "@/schemas/order.schema";
 import {
   CasesArraySchema,
   CaseUpdateClinSchema,
   CaseUpdateSchema,
-} from "@shared/schemas/case.schema";
+} from "@/schemas/case.schema";
 import {
   SamplesArraySchema,
   SampleUpdateDataSchema,
   SampleUpdateDistSchema,
   SampleUpdateExtractSchema,
-} from "@shared/schemas/sample.schema";
+} from "@/schemas/sample.schema";
 import {
   DistArraySchema,
   DistUpdateArraySchema,
   DistUpdateSchema,
-} from "@shared/schemas/dist.schema";
+} from "@/schemas/dist.schema";
 
 // Setting Hono Env
 export type HonoEnv = {
