@@ -1,6 +1,6 @@
-import { db } from "@/db/db";
-import { DistArray, UpdateDist, UpdateDistArray } from "@/types";
-import { samples, cases, distributes } from "@/db/schema";
+import { db } from "@backend/db/db";
+import { DistArray, UpdateDist, UpdateDistArray } from "@backend/types";
+import { samples, cases, distributes } from "@backend/db/schema";
 import { desc, eq, getTableColumns, SQL, sql } from "drizzle-orm";
 import { PgTable } from "drizzle-orm/pg-core";
 

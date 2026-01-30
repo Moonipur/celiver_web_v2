@@ -1,10 +1,10 @@
 import { Hono } from "hono";
-import { authMiddleware } from "@/middlewares/auth.middleware";
+import { authMiddleware } from "@backend/middlewares/auth.middleware";
 import {
   clientRoleMiddleware,
   clinAdminRoleMiddleware,
-} from "@/middlewares/role.middleware";
-import type { HonoEnv } from "@/types";
+} from "@backend/middlewares/role.middleware";
+import type { HonoEnv } from "@backend/types";
 import {
   addDists,
   deleteDistById,
@@ -13,13 +13,13 @@ import {
   getDists,
   updateDist,
   updateDistArray,
-} from "@/db/query/dist.query";
+} from "@backend/db/query/dist.query";
 import {
   DistArrayValidator,
   DistUpdateArrayValidator,
   DistUpdateValidator,
   DistValidator,
-} from "@/validators/dist.validator";
+} from "@backend/validators/dist.validator";
 
 export const dists = new Hono<HonoEnv>();
 

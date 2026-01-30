@@ -3,7 +3,7 @@ import {
   OrderCancelSchema,
   OrderReceiveSchema,
   OrderSchema,
-} from "@/schemas/order.schema";
+} from "@backend/schemas/order.schema";
 
 export const OrderValidator = zValidator("json", OrderSchema, (result, c) => {
   if (!result.success) {

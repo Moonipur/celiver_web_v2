@@ -4,7 +4,7 @@ import {
   DistSchema,
   DistUpdateArraySchema,
   DistUpdateSchema,
-} from "@/schemas/dist.schema";
+} from "@backend/schemas/dist.schema";
 
 export const DistValidator = zValidator("json", DistSchema, (result, c) => {
   if (!result.success) {
