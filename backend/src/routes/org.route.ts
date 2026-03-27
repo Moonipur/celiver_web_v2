@@ -122,28 +122,21 @@ orgs.post(
   },
 );
 
-orgs.post(
-  "/add-member",
-  clientRoleMiddleware,
-  adminRoleMiddleware,
-  clinAdminRoleMiddleware,
-  OrgMemberValidator,
-  async (c) => {
-    const member = c.req.valid("json");
+orgs.post("/add-member", OrgMemberValidator, async (c) => {
+  const member = c.req.valid("json");
 
-    try {
-      const newMember = await addOrgMember(member.email, member.orgSlug);
+  try {
+    const newMember = await addOrgMember(member.email, member.orgSlug);
 
-      return c.json(
-        { message: "Created new member successful", body: newMember },
-        201,
-      );
-    } catch (error) {
-      console.error("Error creating new member: ", error);
-      return c.json({ error: "Failed to create new member" }, 500);
-    }
-  },
-);
+    return c.json(
+      { message: "Created new member successful", body: newMember },
+      201,
+    );
+  } catch (error) {
+    console.error("Error creating new member: ", error);
+    return c.json({ error: "Failed to create new member" }, 500);
+  }
+});
 
 orgs.post(
   "/update",

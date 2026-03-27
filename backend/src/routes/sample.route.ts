@@ -15,7 +15,9 @@ import {
 import {
   addSamples,
   deleteSample,
+  getDupSample,
   getOneSample,
+  getSampleByLotNBcode,
   getSampleByOrgSlug,
   getSampleLatestOrder,
   getSamples,
@@ -73,6 +75,32 @@ samples.get("/one/:orderId/:bCode", clientRoleMiddleware, async (c) => {
 
   try {
     const samplesList = await getOneSample(orderId, bCode);
+
+    return c.json({ message: "Fetched samples successful", body: samplesList });
+  } catch (error) {
+    console.error("Error fetching samples: ", error);
+    return c.json({ error: "Failed to fetch samples" }, 500);
+  }
+});
+
+samples.get("/getSample/:lotId/:bCode", clientRoleMiddleware, async (c) => {
+  const { lotId, bCode } = c.req.param();
+
+  try {
+    const samplesList = await getSampleByLotNBcode(lotId, bCode);
+
+    return c.json({ message: "Fetched samples successful", body: samplesList });
+  } catch (error) {
+    console.error("Error fetching samples: ", error);
+    return c.json({ error: "Failed to fetch samples" }, 500);
+  }
+});
+
+samples.get("/dup/:hCode", async (c) => {
+  const hCode = c.req.param("hCode");
+
+  try {
+    const samplesList = await getDupSample(hCode);
 
     return c.json({ message: "Fetched samples successful", body: samplesList });
   } catch (error) {

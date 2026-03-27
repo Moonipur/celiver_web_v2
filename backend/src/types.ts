@@ -35,6 +35,12 @@ export type HonoEnv = {
   };
 };
 
+export type PostgresError = {
+  code?: string;
+  constraint?: string;
+  detail?: string;
+};
+
 // Order type
 export type Order = InferSelectModel<typeof orders>;
 export type NewOrder = InferInsertModel<typeof orders>;
@@ -77,3 +83,29 @@ export type NewUser = InferInsertModel<typeof user>;
 // Organization type
 export type Org = InferSelectModel<typeof organization>;
 export type NewOrg = InferInsertModel<typeof organization>;
+
+export interface SampleType {
+  id: string;
+  biobankCode?: string;
+  receivedCheck: boolean;
+  extractedCheck: boolean;
+  distRunCheck: boolean;
+  predictScore: number;
+  updatedAt?: Date;
+}
+
+export type Member = {
+  id: string;
+  name: string;
+  hCode: string;
+  bCode: string;
+  userName: string;
+};
+
+export type updateLabVarType = {
+  sampleId: string;
+  afp: number;
+  mainPeak: number;
+  conc: number;
+  score: number;
+};

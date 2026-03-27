@@ -1,6 +1,6 @@
 import { db } from "@/db/db";
 import { UserRoleType } from "@/types";
-import { user } from "@/db/schema";
+import { session, user, organization, member } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
 export const updateUserRole = async (
@@ -17,4 +17,16 @@ export const updateUserRole = async (
     });
 
   return newUserRole;
+};
+
+export const getUser = async (userId: string) => {
+  const [ses] = await db.select().from(user).where(eq(user.id, userId));
+
+  return ses;
+};
+
+export const getUserSession = async (token: string) => {
+  const [ses] = await db.select().from(session).where(eq(session.token, token));
+
+  return ses;
 };

@@ -5,7 +5,11 @@ import { eq } from "drizzle-orm";
 
 export const getOrgDetail = async (orgSlug: string) => {
   const [orgDetail] = await db
-    .select()
+    .select({
+      name: organization.name,
+      HCode: organization.slug,
+      BCode: organization.biobank,
+    })
     .from(organization)
     .where(eq(organization.slug, orgSlug));
 
@@ -14,7 +18,7 @@ export const getOrgDetail = async (orgSlug: string) => {
 
 export const getOrgIdBySlug = async (orgSlug: string) => {
   const [orgDetail] = await db
-    .select({ id: organization.id })
+    .select({ id: organization.id, slug: organization.slug })
     .from(organization)
     .where(eq(organization.slug, orgSlug));
 
@@ -23,7 +27,7 @@ export const getOrgIdBySlug = async (orgSlug: string) => {
 
 export const getOrgIdByBcode = async (orgBcode: string) => {
   const [orgDetail] = await db
-    .select({ id: organization.id })
+    .select({ id: organization.id, slug: organization.slug })
     .from(organization)
     .where(eq(organization.biobank, orgBcode));
 
@@ -42,6 +46,23 @@ export const getOrgMember = async (orgSlug: string) => {
     .innerJoin(organization, eq(member.organizationId, organization.id))
     .where(eq(organization.slug, orgSlug))
     .leftJoin(user, eq(member.userId, user.id));
+};
+
+export const getMember = async (userId: string) => {
+  const [memberData] = await db
+    .select({
+      id: organization.id,
+      name: organization.name,
+      hCode: organization.slug,
+      bCode: organization.biobank,
+      userName: user.name
+    })
+    .from(member)
+    .innerJoin(organization, eq(member.organizationId, organization.id))
+    .innerJoin(user, eq(member.userId, user.id))
+    .where(eq(member.userId, userId));
+
+  return memberData;
 };
 
 export const addNewOrg = async (userId: string, newOrg: NewOrg) => {

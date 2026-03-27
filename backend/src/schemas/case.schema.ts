@@ -25,9 +25,10 @@ export const CaseSchema = z
 
 export const NewCaseSchema = CaseSchema.required().extend({
   updatedBy: z.string().optional(),
-  baselineDisease: z
-    .array(z.string(), "Baseline diseases must separate by comma")
-    .optional(),
+  clinicalStatus: z.enum(["healthy", "high-risk", "hcc"]).default("high-risk"),
+  liverStatus: z.enum(["chronic", "cirrhosis"]).optional().nullable(),
+  etiology: z.array(z.string()).optional(),
+  additionalEtiology: z.array(z.string()).optional(),
 });
 
 export const CaseUpdateSchema = CaseSchema.extend({
@@ -39,13 +40,21 @@ export const CaseUpdateSchema = CaseSchema.extend({
 
 export const CaseUpdateClinSchema = CaseSchema.extend({
   updatedBy: z.string().optional(),
-  baselineDisease: z.array(
-    z.string(),
-    "Baseline diseases must separate by comma",
-  ),
+  clinicalStatus: z.enum(["healthy", "high-risk", "hcc"]).default("high-risk"),
+  liverStatus: z.enum(["chronic", "cirrhosis"]).optional().nullable(),
+  etiology: z.array(z.string()).optional(),
+  additionalEtiology: z.array(z.string()).optional(),
 }).omit({
   hospitalId: true,
   hospitalCode: true,
 });
 
 export const CasesArraySchema = z.array(NewCaseSchema);
+
+export const CasesArrVisitSchema = z.array(
+  NewCaseSchema.extend({
+    caseId: z.uuid(),
+    visit: z.int().min(1),
+    note: z.string().optional().nullable(),
+  }),
+);

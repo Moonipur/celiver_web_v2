@@ -1,5 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
 import {
+  NotifySchema,
   OrderCancelSchema,
   OrderReceiveSchema,
   OrderSchema,
@@ -45,3 +46,14 @@ export const OrderReceiveValidator = zValidator(
     }
   },
 );
+
+export const NotifyValidator = zValidator("json", NotifySchema, (result, c) => {
+  if (!result.success) {
+    return c.json(
+      {
+        error: result.error.issues.map((issue) => issue.message),
+      },
+      400,
+    );
+  }
+});

@@ -49,11 +49,9 @@ function RegisterComponent() {
     const formValues = Object.fromEntries(formData.entries())
 
     try {
-      const result = await createUser({ data: formValues })
+      await createUser({ data: formValues })
 
-      console.log('User created:', result)
-
-      navigate({ to: '/' })
+      await navigate({ to: '/' })
     } catch (err) {
       console.error(err)
       setError('Failed to create account. Please try again.')
@@ -114,7 +112,7 @@ function RegisterComponent() {
                   id="organization"
                   name="organization"
                   className="pl-9"
-                  placeholder="Acme Inc."
+                  placeholder="CMI"
                   required
                   disabled={isLoading}
                 />

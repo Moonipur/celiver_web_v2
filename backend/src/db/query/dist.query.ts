@@ -13,7 +13,34 @@ export const getDists = async () => {
 
 export const getDistBySample = async (sampleId: string) => {
   return await db
-    .select({ ...getTableColumns(distributes), biobank: cases.biobankCode })
+    .select({
+      distId: distributes.id,
+      passQC: distributes.passQC,
+      bin1: distributes.bin1,
+      bin2: distributes.bin2,
+      bin3: distributes.bin3,
+      bin4: distributes.bin4,
+      bin5: distributes.bin5,
+      bin6: distributes.bin6,
+      bin7: distributes.bin7,
+      bin8: distributes.bin8,
+      bin9: distributes.bin9,
+      bin10: distributes.bin10,
+      bin11: distributes.bin11,
+      bin12: distributes.bin12,
+      bin13: distributes.bin13,
+      bin14: distributes.bin14,
+      bin15: distributes.bin15,
+      bin16: distributes.bin16,
+      bin17: distributes.bin17,
+      bin18: distributes.bin18,
+      bin19: distributes.bin19,
+      bin20: distributes.bin20,
+      note: distributes.note,
+      afp: samples.afp,
+      mainPeak: samples.mainPeak,
+      conc: samples.conc,
+    })
     .from(distributes)
     .innerJoin(samples, eq(distributes.sampleId, samples.id))
     .where(eq(samples.id, sampleId))
@@ -21,7 +48,7 @@ export const getDistBySample = async (sampleId: string) => {
 };
 
 export const addDists = async (distsArr: DistArray) => {
-  return await db.insert(distributes).values(distsArr).returning();
+  return await db.insert(distributes).values(distsArr);
 };
 
 export const updateDist = async (userId: string, distData: UpdateDist) => {
@@ -80,10 +107,10 @@ export const updateDistArray = async (distsArr: UpdateDistArray) => {
         "bin19",
         "bin20",
         "passQC",
+        "note",
         "updatedBy",
       ]),
-    })
-    .returning();
+    });
 };
 
 export const deleteDistById = async (distId: string) => {

@@ -9,6 +9,11 @@ import tailwindcss from '@tailwindcss/vite'
 import { nitro } from 'nitro/vite'
 
 const config = defineConfig({
+  server: {
+    host: 'localhost',
+    port: 3000,
+    allowedHosts: ['clumpy-overfit-miguel.ngrok-free.dev'],
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
@@ -25,6 +30,14 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
   ],
+  optimizeDeps: {
+    include: ['react-to-print'],
+  },
+  build: {
+    commonjsOptions: {
+      include: [/react-to-print/, /node_modules/],
+    },
+  },
 })
 
 export default config

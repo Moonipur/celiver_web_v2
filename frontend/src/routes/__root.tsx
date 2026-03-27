@@ -3,18 +3,15 @@ import {
   Scripts,
   createRootRouteWithContext,
 } from '@tanstack/react-router'
-import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
-
 import Header from '@/components/Header'
-
-import TanStackQueryDevtools from '@/integrations/tanstack-query/devtools'
 
 import appCss from '@/styles.css?url'
 
 import type { QueryClient } from '@tanstack/react-query'
 import { NotFound } from '@/components/NotFound'
 import { AuthResponse } from '@/servers/types'
+import { getSessionFn } from '@/servers/user.functions'
+import { Toaster } from '@/components/ui/sonner'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -22,6 +19,13 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+  loader: async () => {
+    const session = await getSessionFn()
+
+    return {
+      session,
+    }
+  },
   head: () => ({
     meta: [
       {
@@ -43,8 +47,8 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     ],
   }),
 
-  shellComponent: RootDocument,
   notFoundComponent: NotFound,
+  shellComponent: RootDocument,
 })
 
 function RootDocument({ children }: { children: React.ReactNode }) {
@@ -56,7 +60,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
       <Header />
       <body>
         {children}
-        <TanStackDevtools
+        <Toaster />
+        {/* <TanStackDevtools
           config={{
             position: 'bottom-right',
           }}
@@ -67,7 +72,7 @@ function RootDocument({ children }: { children: React.ReactNode }) {
             },
             TanStackQueryDevtools,
           ]}
-        />
+        /> */}
         <Scripts />
       </body>
     </html>

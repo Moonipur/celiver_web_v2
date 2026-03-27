@@ -108,9 +108,25 @@ cases.post("/create", CasesArrayValidator, async (c) => {
     const caseArr = await addCases(mapCasesList);
 
     return c.json({ message: "Created cases successful", body: caseArr }, 201);
-  } catch (error) {
-    console.error("Error creating cases: ", error);
-    return c.json({ error: "Failed to create cases" }, 500);
+  } catch (error: unknown) {
+    if (typeof error === "object" && error !== null && "code" in error) {
+      const pgErr = error as {
+        code?: string;
+        constraint?: string;
+      };
+
+      if (pgErr.code === "23505") {
+        return c.json(
+          {
+            success: false,
+            message: "Hospital code already exists.",
+          },
+          409,
+        );
+      }
+    }
+
+    throw error;
   }
 });
 

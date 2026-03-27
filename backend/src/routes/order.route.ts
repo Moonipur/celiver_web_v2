@@ -10,15 +10,14 @@ import {
   getOrderByOrgSlug,
   addOrder,
   cancelOrder,
-  receiveOrder,
   deleteOrder,
 } from "@/db/query/order.query";
 import type { HonoEnv } from "@/types";
 import {
+  NotifyValidator,
   OrderCancelValidator,
-  OrderReceiveValidator,
-  OrderValidator,
 } from "@/validators/order.validator";
+import { sendTelegram } from "@/lib/telegram";
 
 export const orders = new Hono<HonoEnv>();
 
@@ -83,25 +82,6 @@ orders.post(
   },
 );
 
-orders.post(
-  "/receive",
-  clientRoleMiddleware,
-  OrderReceiveValidator,
-  async (c) => {
-    const user = c.get("user");
-    const orderData = c.req.valid("json");
-
-    try {
-      const order = await receiveOrder(user.id, orderData);
-
-      return c.json({ message: "Created order successful", body: order }, 201);
-    } catch (error) {
-      console.error("Error creating order: ", error);
-      return c.json({ error: "Failed to create order" }, 500);
-    }
-  },
-);
-
 orders.delete(
   "/delete/:orderId",
   clientRoleMiddleware,
@@ -120,3 +100,27 @@ orders.delete(
     }
   },
 );
+
+orders.post("/notify", clientRoleMiddleware, NotifyValidator, async (c) => {
+  const notifyData = c.req.valid("json");
+
+  try {
+    // Await the result so you actually know if it worked
+    // const result = await sendTelegram(
+    //   notifyData.lotId,
+    //   notifyData.orgSlug,
+    //   new Date(notifyData.date), // Ensure string is cast back to Date
+    //   notifyData.cases,
+    // );
+
+    if (!result.ok) {
+      console.error("Telegram API rejected message:", result);
+      // Optional: return error if notification is critical
+    }
+
+    return c.json({ message: "Notified order successful" }, 201);
+  } catch (error) {
+    console.error("Error notifying order: ", error);
+    return c.json({ error: "Failed to notify order" }, 500);
+  }
+});

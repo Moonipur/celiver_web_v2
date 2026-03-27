@@ -1,5 +1,10 @@
 import * as React from 'react'
-import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  Link,
+  useNavigate,
+  useRouter,
+} from '@tanstack/react-router'
 import { Eye, EyeOff, Loader2, LogIn } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,6 +18,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Separator } from '@/components/ui/separator'
+import { loginUser } from '@/servers/user.functions'
 
 // 1. Create the Route
 export const Route = createFileRoute('/login')({
@@ -20,9 +26,13 @@ export const Route = createFileRoute('/login')({
 })
 
 function LoginComponent() {
+  const router = useRouter()
   const navigate = useNavigate()
+
   const [isLoading, setIsLoading] = React.useState(false)
   const [showPassword, setShowPassword] = React.useState(false)
+
+  const [error, setError] = React.useState<string | null>(null)
 
   // 2. Handle Form Submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -31,16 +41,18 @@ function LoginComponent() {
     const formData = new FormData(e.currentTarget)
     const values = Object.fromEntries(formData.entries())
 
-    console.log(values)
+    try {
+      await loginUser({ data: values })
 
-    setIsLoading(true)
+      await router.invalidate()
 
-    // Simulate API call
-    setTimeout(() => {
+      await navigate({ to: '/dashboard' })
+    } catch (err) {
+      console.error(err)
+      setError('Failed to login. Please try again.')
+    } finally {
       setIsLoading(false)
-      // Navigate to dashboard on success
-      navigate({ to: '/dashboard' })
-    }, 2000)
+    }
   }
 
   return (
@@ -111,6 +123,9 @@ function LoginComponent() {
                   </span>
                 </Button>
               </div>
+              {error && (
+                <p className="text-sm font-medium text-destructive">{error}</p>
+              )}
             </div>
 
             {/* Submit Button */}
