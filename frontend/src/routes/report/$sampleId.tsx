@@ -7,6 +7,7 @@ import { FileCheck, Printer } from 'lucide-react'
 import { PatientData } from '@/servers/types'
 import { getSessionFn } from '@/servers/user.functions'
 import { sampleReport } from '@/servers/report.function'
+import { Capitalize, formatNumber, formattedDatetime } from '@/lib/utils'
 
 export const Route = createFileRoute('/report/$sampleId')({
   beforeLoad: async ({ params }) => {
@@ -18,38 +19,43 @@ export const Route = createFileRoute('/report/$sampleId')({
       })
     }
 
-    if (session?.user.role === 'client') {
+    if (session?.user.role === 'client' || session?.user.role === 'clinAdmin') {
       throw redirect({
         to: '/dashboard',
       })
     }
 
-    // const sampleData = await sampleReport({
-    //   data: params.sampleId,
-    // })
+    const sampleData = await sampleReport({
+      data: params.sampleId,
+    })
 
-    // if (!sampleData.body.score) {
-    //   throw redirect({ to: '/analysis' })
-    // }
+    if (!sampleData.data || sampleData.data?.score === null) {
+      throw redirect({ to: '/analysis' })
+    }
 
     return {
       session,
-      // sampleData,
+      sampleData,
     }
   },
   loader: async ({ context, params }) => {
-    // In a real app, await db.select()...
+    const { sampleData } = context
+
     return {
       session: context.session,
       data: {
         id: params.sampleId,
-        age: 44,
-        sex: 'Male',
-        collectionDate: '2025-10-16',
-        clinicalNotes: 'AFP: 19.95 ng/mL',
-        predictionScore: 0.24,
-        technologist: 'Jane Smith',
-        pathologist: 'Dr. A. Director',
+        hCode: sampleData.data.hCode,
+        bCode: sampleData.data.bCode,
+        age: parseInt(sampleData.data.age),
+        sex: Capitalize(sampleData.data.sex),
+        collectionDate: formattedDatetime(sampleData.data.orderedDate),
+        afpNotes: `AFP: ${!sampleData.data.afp ? '-' : formatNumber(sampleData.data.afp)} ng/mL`,
+        concNotes: `Conc: ${!sampleData.data.conc ? '-' : formatNumber(sampleData.data.conc)} ng/mL plasma`,
+        mainPeakNotes: `Main-peak: ${!sampleData.data.mainPeak ? '-' : sampleData.data.mainPeak} bp`,
+        predictionScore: parseFloat(String(sampleData.data.score ?? '0')),
+        technologist: 'Dr. Sasimol Udomruk',
+        pathologist: 'Dr. Parunya Chaiyawat',
       } as PatientData,
     }
   },
@@ -63,7 +69,7 @@ function ReportComponent() {
 
   const handlePrint = useReactToPrint({
     contentRef: componentRef,
-    documentTitle: `CEliver_Report_${data.id}`,
+    documentTitle: `CEliver_Report_${data.bCode}`,
     // Ensure styles are injected for printing
     onAfterPrint: () => console.log('Print success'),
   })

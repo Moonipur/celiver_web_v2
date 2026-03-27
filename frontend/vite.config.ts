@@ -35,8 +35,11 @@ const config = defineConfig({
   },
   build: {
     commonjsOptions: {
-      include: [/react-to-print/, /node_modules/],
+      include: [/node_modules/],
     },
+  },
+  ssr: {
+    noExternal: ['react-to-print'],
   },
 })
 

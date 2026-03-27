@@ -49,7 +49,7 @@ predict.get("/:bCode", clientRoleMiddleware, async (c) => {
     const orderBy = await getUser(orderByID);
 
     return c.json({
-      message: "Fetched orders successful",
+      message: "Fetched predict successful",
       body: {
         code: bCode,
         age: caseData.age,
@@ -60,8 +60,8 @@ predict.get("/:bCode", clientRoleMiddleware, async (c) => {
       },
     });
   } catch (error) {
-    console.error("Error fetching orders: ", error);
-    return c.json({ error: "Failed to fetch orders" }, 500);
+    console.error("Error fetching predict: ", error);
+    return c.json({ error: "Failed to fetch predict" }, 500);
   }
 });
 

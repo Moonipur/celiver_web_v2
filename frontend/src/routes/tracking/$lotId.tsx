@@ -86,7 +86,7 @@ export const Route = createFileRoute('/tracking/$lotId')({
       })
     }
 
-    if (session?.user.role === 'client') {
+    if (session?.user.role === 'client' || session?.user.role === 'clinAdmin') {
       throw redirect({
         to: '/dashboard',
       })

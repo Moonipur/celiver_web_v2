@@ -33,7 +33,7 @@ export const getSessionFn = createServerFn({ method: 'GET' }).handler(
 
       setCookie('token', response.data.session.token, {
         path: '/',
-        expires: new Date(response.data.session.expiresAt),
+        sameSite: 'lax',
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
       })
@@ -90,7 +90,7 @@ export const createUser = createServerFn({ method: 'POST' })
 
 export const loginUser = createServerFn({ method: 'POST' })
   .inputValidator((data: unknown) => UserLoginSchema.parse(data))
-  .handler(async ({ data }): Promise<AuthResponse | null> => {
+  .handler(async ({ data }) => {
     try {
       // 1. Get the initial token
       const loginResponse = await axios.post<LoginResponse>(
@@ -99,24 +99,16 @@ export const loginUser = createServerFn({ method: 'POST' })
         { headers: createHeader() },
       )
 
-      const sessionResponse = await axios.get<AuthResponse>(
-        `${process.env.BACKEND_URL}/api/users/getSession/${loginResponse.data.token}`,
-      )
-
-      if (!sessionResponse.data || !sessionResponse.data.session) {
-        return null
-      }
-
       // 3. Set the final, session-aware cookie
-      setCookie('token', sessionResponse.data.session.token, {
+      setCookie('token', loginResponse.data.token, {
         path: '/',
-        expires: new Date(sessionResponse.data.session.expiresAt),
+        sameSite: 'lax',
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
       })
 
       // 4. Return the session data
-      return sessionResponse.data
+      // return loginResponse.data
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('Backend Error:', error.response?.data)

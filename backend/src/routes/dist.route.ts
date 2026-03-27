@@ -18,7 +18,6 @@ import {
   DistArrayValidator,
   DistUpdateArrayValidator,
   DistUpdateValidator,
-  DistValidator,
 } from "@/validators/dist.validator";
 
 export const dists = new Hono<HonoEnv>();

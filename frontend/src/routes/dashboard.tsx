@@ -41,7 +41,7 @@ export const Route = createFileRoute('/dashboard')({
 
 // Mock data for the line chart
 const chartData = [
-  { month: 'Jan', cases: 2},
+  { month: 'Jan', cases: 2 },
   { month: 'Feb', cases: 48 },
   { month: 'Mar', cases: 50 },
   { month: 'Apr', cases: 400 },
@@ -60,7 +60,7 @@ const chartConfig = {
   cumulativeCases: {
     label: 'Cases',
     color: 'var(--chart-1)',
-  }
+  },
 }
 
 const barChartConfig = {
@@ -74,14 +74,14 @@ function DashboardComponent() {
   const totalCases = chartData.reduce((acc, curr) => acc + curr.cases, 0)
   const expectedCases = 1200
 
-  let cumulativeSum = 0;
+  let cumulativeSum = 0
   const processedChartData = chartData.map((item) => {
-    cumulativeSum += item.cases;
+    cumulativeSum += item.cases
     return {
       ...item,
       cumulativeCases: cumulativeSum,
-    };
-  });
+    }
+  })
 
   return (
     <div className="max-w-7xl p-6 mx-auto space-y-6">
@@ -92,7 +92,7 @@ function DashboardComponent() {
         {/* Box 1: Total Cases */}
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Cases</CardTitle>
+            <CardTitle className="text-sm font-medium">Total Samples</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -100,7 +100,7 @@ function DashboardComponent() {
               {totalCases.toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">
-              Cumulated cases recorded
+              Cumulated samples recorded
             </p>
           </CardContent>
         </Card>
@@ -109,7 +109,7 @@ function DashboardComponent() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
-              Expected Cases
+              Expected Samples
             </CardTitle>
             <Target className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -118,7 +118,7 @@ function DashboardComponent() {
               {expectedCases.toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">
-              Cases volume for model validation
+              Samples volume for model validation
             </p>
           </CardContent>
         </Card>
@@ -126,7 +126,9 @@ function DashboardComponent() {
         {/* Box 3: Model Performance Metrics */}
         <Card className="md:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Model Performance</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Model Performance
+            </CardTitle>
             <Activity className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent className="pt-4">
@@ -137,11 +139,17 @@ function DashboardComponent() {
               </div>
               <div className="flex flex-col space-y-1">
                 <span className="text-2xl font-bold text-blue-600">89.5%</span>
-                <span className="text-xs text-muted-foreground">Sensitivity</span>
+                <span className="text-xs text-muted-foreground">
+                  Sensitivity
+                </span>
               </div>
               <div className="flex flex-col space-y-1">
-                <span className="text-2xl font-bold text-purple-600">96.8%</span>
-                <span className="text-xs text-muted-foreground">Specificity</span>
+                <span className="text-2xl font-bold text-purple-600">
+                  96.8%
+                </span>
+                <span className="text-xs text-muted-foreground">
+                  Specificity
+                </span>
               </div>
             </div>
           </CardContent>
@@ -150,14 +158,11 @@ function DashboardComponent() {
 
       {/* Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
         {/* Line Chart (Takes up 2/3 of the row on large screens) */}
         <Card className="lg:col-span-2 flex flex-col">
           <CardHeader>
             <CardTitle>Case Growth</CardTitle>
-            <CardDescription>
-              Monthly trend of new cases.
-            </CardDescription>
+            <CardDescription>Monthly trend of new samples.</CardDescription>
           </CardHeader>
           <CardContent className="flex-1">
             <ChartContainer config={chartConfig} className="h-[350px] w-full">
@@ -214,12 +219,13 @@ function DashboardComponent() {
         <Card className="flex flex-col">
           <CardHeader>
             <CardTitle>Case Distribution</CardTitle>
-            <CardDescription>
-              Total count by category.
-            </CardDescription>
+            <CardDescription>Total count by category.</CardDescription>
           </CardHeader>
           <CardContent className="flex-1">
-            <ChartContainer config={barChartConfig} className="h-[350px] w-full">
+            <ChartContainer
+              config={barChartConfig}
+              className="h-[350px] w-full"
+            >
               <BarChart
                 data={barChartData}
                 layout="vertical"
@@ -230,7 +236,11 @@ function DashboardComponent() {
                   bottom: 0,
                 }}
               >
-                <CartesianGrid horizontal={false} vertical={true} strokeDasharray="3 3" />
+                <CartesianGrid
+                  horizontal={false}
+                  vertical={true}
+                  strokeDasharray="3 3"
+                />
                 <XAxis
                   type="number"
                   tickLine={false}
@@ -248,17 +258,16 @@ function DashboardComponent() {
                   cursor={{ fill: 'var(--muted)' }}
                   content={<ChartTooltipContent />}
                 />
-                <Bar 
-                  dataKey="count" 
-                  fill="var(--chart-2)" 
-                  radius={[0, 4, 4, 0]} 
-                  barSize={40} 
+                <Bar
+                  dataKey="count"
+                  fill="var(--chart-2)"
+                  radius={[0, 4, 4, 0]}
+                  barSize={40}
                 />
               </BarChart>
             </ChartContainer>
           </CardContent>
         </Card>
-
       </div>
     </div>
   )

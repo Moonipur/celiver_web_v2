@@ -1,6 +1,7 @@
 import { betterAuth } from "better-auth";
 import { openAPI } from "better-auth/plugins";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
+import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { db } from "@/db/db";
 import { sendEmail } from "@/lib/email";
 
@@ -21,7 +22,7 @@ export const auth = betterAuth({
     },
   },
   session: {
-    expiresIn: 60 * 60 * 2,
+    expiresIn: 60 * 60 * 4,
     updateAge: 60 * 15,
   },
   emailAndPassword: {
@@ -38,5 +39,5 @@ export const auth = betterAuth({
       });
     },
   },
-  plugins: [openAPI()],
+  plugins: [openAPI(), tanstackStartCookies()],
 });

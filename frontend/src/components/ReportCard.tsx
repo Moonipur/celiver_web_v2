@@ -1,7 +1,7 @@
+import { formatCode } from '@/lib/utils'
 import { PatientData } from '@/servers/types'
 import { Activity, AlertCircle, Syringe } from 'lucide-react'
 import { forwardRef } from 'react'
-
 
 export const ClinicalReport = forwardRef<HTMLDivElement, { data: PatientData }>(
   ({ data }, ref) => {
@@ -22,7 +22,7 @@ export const ClinicalReport = forwardRef<HTMLDivElement, { data: PatientData }>(
       `}</style>
 
         {/* HEADER */}
-        <header className="flex justify-between items-start border-b border-neutral-200 pb-4 mb-4 shrink-0">
+        <div className="flex justify-between items-start border-b border-neutral-200 pb-2 mb-2 shrink-0">
           <div className="flex items-center gap-4">
             <div className="border-2 border-blue-700 rounded-full px-4 py-1.5 flex items-center gap-2">
               <span className="font-bold text-xl tracking-tight text-neutral-900">
@@ -34,7 +34,10 @@ export const ClinicalReport = forwardRef<HTMLDivElement, { data: PatientData }>(
               <h1 className="font-serif text-2xl font-bold text-teal-700">
                 Case Report
               </h1>
-              <p className="text-xs text-neutral-500 mt-1">
+              <p
+                className="text-xs text-neutral-500 mt-1"
+                suppressHydrationWarning
+              >
                 Generated: {new Date().toLocaleDateString()}
               </p>
             </div>
@@ -51,26 +54,32 @@ export const ClinicalReport = forwardRef<HTMLDivElement, { data: PatientData }>(
             <br />
             sasimol.ud@cmu.ac.th • 053-934-674
           </div>
-        </header>
+        </div>
 
         {/* PATIENT INFO */}
-        <section className="mb-4 shrink-0">
+        <section className="mb-2 shrink-0">
           <h3 className="text-teal-700 font-semibold border-b border-neutral-100 pb-1 mb-1 text-lg">
             Patient Information
           </h3>
           <table className="w-full text-sm border-collapse">
-            <tbody className="divide-y divide-neutral-100">
-              <InfoRow label="Patient ID" value={data.id} />
+            <tbody className="divide-y divide-neutral-100 whitespace-pre-line">
+              <InfoRow
+                label="Patient ID"
+                value={`${formatCode(data.hCode, 3)}/ ${formatCode(data.bCode, 2)}`}
+              />
               <InfoRow label="Age" value={data.age.toString()} />
               <InfoRow label="Sex" value={data.sex} />
               <InfoRow label="Collection Date" value={data.collectionDate} />
-              <InfoRow label="Clinical Notes" value={data.clinicalNotes} />
+              <InfoRow
+                label="Clinical Notes"
+                value={`${data.afpNotes}\n${data.concNotes}\n${data.mainPeakNotes}`}
+              />
             </tbody>
           </table>
         </section>
 
         {/* PREDICTION CHART */}
-        <section className="mb-4 shrink-0">
+        <section className="mb-2 shrink-0">
           <h3 className="text-teal-700 font-semibold border-b border-neutral-100 pb-2 mb-3 text-lg">
             Prediction
           </h3>
@@ -113,7 +122,7 @@ export const ClinicalReport = forwardRef<HTMLDivElement, { data: PatientData }>(
         </section>
 
         {/* SUMMARY */}
-        <section className="mb-4 shrink-0 print:break-inside-avoid">
+        <section className="mb-2 shrink-0 print:break-inside-avoid">
           <h3
             className={`${isPositive ? 'text-red-700' : 'text-teal-700'} font-semibold border-b border-neutral-100 pb-2 mb-3 text-lg`}
           >
@@ -135,7 +144,7 @@ export const ClinicalReport = forwardRef<HTMLDivElement, { data: PatientData }>(
         </section>
 
         {/* DISCLAIMER */}
-        <section className="mb-3 shrink-0 print:break-inside-avoid">
+        <section className="mb-2 shrink-0 print:break-inside-avoid">
           <h3 className="text-teal-700 font-semibold border-b border-neutral-100 pb-2 mb-3 text-lg">
             Disclaimer
           </h3>
@@ -154,7 +163,7 @@ export const ClinicalReport = forwardRef<HTMLDivElement, { data: PatientData }>(
 
         {/* SIGNATURES */}
         {/* Adjusted spacing to fit neatly before the footer */}
-        <div className="flex justify-between shrink-0 print:break-inside-avoid">
+        <div className="flex mb-2 justify-between shrink-0 print:break-inside-avoid">
           <SignatureBlock
             title="Reported By"
             name={data.technologist}
@@ -169,7 +178,7 @@ export const ClinicalReport = forwardRef<HTMLDivElement, { data: PatientData }>(
 
         {/* FOOTER */}
         {/* mt-auto pushes the footer to the absolute bottom of the A4 height boundary */}
-        <footer className="mt-auto pt-2 border-t border-neutral-200 flex justify-between text-[9px] text-neutral-400 shrink-0 print:break-inside-avoid">
+        <div className="mt-auto pt-2 border-t border-neutral-200 flex justify-between text-[9px] text-neutral-400 shrink-0 print:break-inside-avoid">
           <div className="leading-tight">
             <strong>
               Center of Multidisciplinary Technology for Advanced Medicine
@@ -182,7 +191,7 @@ export const ClinicalReport = forwardRef<HTMLDivElement, { data: PatientData }>(
             110 Intawaroros Road, Si Phum, Muang, Chiang Mai 50200, Thailand
           </div>
           <div>&copy; CEliver • Privacy Policy</div>
-        </footer>
+        </div>
       </div>
     )
   },
@@ -196,9 +205,7 @@ function InfoRow({ label, value }: { label: string; value: string }) {
       <td className="py-1 w-[30%] font-medium text-neutral-600 align-top text-xs">
         {label}
       </td>
-      <td className="py-1 text-neutral-900 font-medium text-xs">
-        {value}
-      </td>
+      <td className="py-1 text-neutral-900 font-medium text-xs">{value}</td>
     </tr>
   )
 }

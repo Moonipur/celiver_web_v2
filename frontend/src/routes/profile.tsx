@@ -1,6 +1,7 @@
 import {
   createFileRoute,
   Link,
+  redirect,
   useNavigate,
   useRouter,
 } from '@tanstack/react-router'
@@ -27,7 +28,27 @@ import {
   Contact,
 } from 'lucide-react'
 import { authMiddleware } from '@/middlewares/auth.middleware'
+import { getSessionFn } from '@/servers/user.functions'
 export const Route = createFileRoute('/profile')({
+  beforeLoad: async () => {
+    const session = await getSessionFn()
+
+    if (!session?.user) {
+      throw redirect({
+        to: '/login',
+      })
+    }
+
+    if (session?.user.role === 'client') {
+      throw redirect({
+        to: '/dashboard',
+      })
+    }
+
+    return {
+      session,
+    }
+  },
   server: { middleware: [authMiddleware] },
   loader: ({ context }) => {
     return {

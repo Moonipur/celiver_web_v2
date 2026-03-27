@@ -37,21 +37,23 @@ function LoginComponent() {
   // 2. Handle Form Submission
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    setIsLoading(true)
+    setError(null)
 
     const formData = new FormData(e.currentTarget)
-    const values = Object.fromEntries(formData.entries())
+    const email = formData.get('email') as string
+    const password = formData.get('password') as string
 
     try {
-      await loginUser({ data: values })
+      // Pass only what is needed
+      await loginUser({ data: { email, password } })
 
+      // Invalidate before navigating to ensure the next page has fresh auth state
       await router.invalidate()
-
       await navigate({ to: '/dashboard' })
-    } catch (err) {
-      console.error(err)
-      setError('Failed to login. Please try again.')
-    } finally {
-      setIsLoading(false)
+    } catch (err: any) {
+      setError(err.message || 'Failed to login')
+      setIsLoading(false) // Reset loading only on error; navigation handles success
     }
   }
 

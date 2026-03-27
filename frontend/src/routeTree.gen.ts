@@ -16,6 +16,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ClinicalDataRouteImport } from './routes/clinical-data'
 import { Route as ClientOrderRouteImport } from './routes/client-order'
 import { Route as AnalysisRouteImport } from './routes/analysis'
 import { Route as AboutRouteImport } from './routes/about'
@@ -60,6 +61,11 @@ const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
 const DashboardRoute = DashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ClinicalDataRoute = ClinicalDataRouteImport.update({
+  id: '/clinical-data',
+  path: '/clinical-data',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ClientOrderRoute = ClientOrderRouteImport.update({
@@ -118,6 +124,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/analysis': typeof AnalysisRouteWithChildren
   '/client-order': typeof ClientOrderRoute
+  '/clinical-data': typeof ClinicalDataRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -136,6 +143,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/client-order': typeof ClientOrderRoute
+  '/clinical-data': typeof ClinicalDataRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -154,6 +162,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/analysis': typeof AnalysisRouteWithChildren
   '/client-order': typeof ClientOrderRoute
+  '/clinical-data': typeof ClinicalDataRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -175,6 +184,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/analysis'
     | '/client-order'
+    | '/clinical-data'
     | '/dashboard'
     | '/forgot-password'
     | '/login'
@@ -193,6 +203,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/client-order'
+    | '/clinical-data'
     | '/dashboard'
     | '/forgot-password'
     | '/login'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/analysis'
     | '/client-order'
+    | '/clinical-data'
     | '/dashboard'
     | '/forgot-password'
     | '/login'
@@ -230,6 +242,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AnalysisRoute: typeof AnalysisRouteWithChildren
   ClientOrderRoute: typeof ClientOrderRoute
+  ClinicalDataRoute: typeof ClinicalDataRoute
   DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
@@ -288,6 +301,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof DashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/clinical-data': {
+      id: '/clinical-data'
+      path: '/clinical-data'
+      fullPath: '/clinical-data'
+      preLoaderRoute: typeof ClinicalDataRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/client-order': {
@@ -409,6 +429,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AnalysisRoute: AnalysisRouteWithChildren,
   ClientOrderRoute: ClientOrderRoute,
+  ClinicalDataRoute: ClinicalDataRoute,
   DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,

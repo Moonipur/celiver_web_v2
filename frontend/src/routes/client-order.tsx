@@ -36,20 +36,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import { Textarea } from '@/components/ui/textarea'
 import { getSessionFn } from '@/servers/user.functions'
-
-interface PatientRecord {
-  id: string
-  code: string
-  bcode: string | null
-  visit: string | null
-  age: number
-  sex: string
-  clinicalStatus: string
-  liverStatus: string
-  etiology: string[]
-  addEtiology: string
-  note: string
-}
+import { PatientRecord } from '@/servers/types'
 
 export const Route = createFileRoute('/client-order')({
   beforeLoad: async () => {
@@ -58,6 +45,12 @@ export const Route = createFileRoute('/client-order')({
     if (!session?.user) {
       throw redirect({
         to: '/login',
+      })
+    }
+
+    if (session?.user.role === 'client' || session?.user.role === 'admin') {
+      throw redirect({
+        to: '/dashboard',
       })
     }
 
@@ -98,12 +91,12 @@ function RouteComponent() {
   }, [])
 
   React.useEffect(() => {
-  if (patients.length > 0) {
-    localStorage.setItem('pending_patients', JSON.stringify(patients))
-  } else {
-    localStorage.removeItem('pending_patients') 
-  }
-}, [patients])
+    if (patients.length > 0) {
+      localStorage.setItem('pending_patients', JSON.stringify(patients))
+    } else {
+      localStorage.removeItem('pending_patients')
+    }
+  }, [patients])
 
   const [editingId, setEditingId] = useState<string | null>(null)
 
@@ -276,9 +269,9 @@ function RouteComponent() {
         <CardHeader>
           <CardTitle className="text-sm flex items-center gap-2">
             {editingId ? (
-              <Edit2 className="w-4 h-4 text-orange-500" />
+              <Edit2 className="w-5 h-5 text-orange-500" />
             ) : (
-              <UserPlus className="w-4 h-4" />
+              <UserPlus className="w-5 h-5" />
             )}
             {editingId ? 'EDITING PATIENT' : 'ADD NEW PATIENT'}
           </CardTitle>

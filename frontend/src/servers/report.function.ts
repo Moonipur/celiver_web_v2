@@ -17,13 +17,14 @@ export const sampleReport = createServerFn({ method: 'POST' })
         },
       )
 
-      return response.data
+      return {
+        success: true,
+        data: response.data.body,
+      }
     } catch (error: any) {
-      console.error(
-        'API Error Response:',
-        error.response?.data || error.message,
-      )
-
-      throw new Error(error.response?.data?.message || 'Failed to update order')
+      return {
+        success: false,
+        data: null,
+      }
     }
   })

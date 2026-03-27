@@ -167,11 +167,15 @@ export type DistributionStage = {
 
 export interface PatientData {
   id: string
+  hCode: string
+  bCode: string
   patientName: string
   age: number
   sex: 'Male' | 'Female'
   collectionDate: string
-  clinicalNotes: string
+  afpNotes: string
+  concNotes: string
+  mainPeakNotes: string
   predictionScore: number
   technologist: string
   pathologist: string
@@ -323,4 +327,19 @@ export type ReportSample = {
   mainPeak: number | null
   conc: number | null
   score: number | null
+  orderedDate: Date
+}
+
+export interface PatientRecord {
+  id: string
+  code: string
+  bcode: string | null
+  visit: string | null
+  age: number
+  sex: string
+  clinicalStatus: string
+  liverStatus: string
+  etiology: string[]
+  addEtiology: string
+  note: string
 }

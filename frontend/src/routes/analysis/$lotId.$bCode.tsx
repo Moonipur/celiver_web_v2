@@ -28,7 +28,12 @@ import {
   YAxis,
   Tooltip,
 } from 'recharts'
-import { Capitalize, formatCode, transformToChartData } from '@/lib/utils'
+import {
+  Capitalize,
+  formatCode,
+  formatNumber,
+  transformToChartData,
+} from '@/lib/utils'
 import {
   Table,
   TableBody,
@@ -131,7 +136,7 @@ export const Route = createFileRoute('/analysis/$lotId/$bCode')({
       })
     }
 
-    if (session?.user.role === 'client') {
+    if (session?.user.role === 'client' || session?.user.role === 'clinAdmin') {
       throw redirect({
         to: '/dashboard',
       })
@@ -500,6 +505,7 @@ function AnalysisSampleComponent() {
             }}
           />
           <Button
+            key={'upload_btn'}
             className="w-full mt-4"
             disabled={selectedFiles.length === 0 || isPending}
             onClick={() => mutate(selectedFiles)}
@@ -510,6 +516,7 @@ function AnalysisSampleComponent() {
           </Button>
 
           <Button
+            key={'reset_btn'}
             variant="ghost"
             className="w-full mt-2"
             size="sm"
@@ -572,6 +579,7 @@ function AnalysisSampleComponent() {
                   {Array.from({ length: numRun }, (_, i) => {
                     return (
                       <Line
+                        key={`Run${i + 1}`}
                         dataKey={`Run${i + 1}`}
                         type="monotone"
                         stroke={`var(--chart-${i + 1})`}
@@ -631,18 +639,22 @@ function AnalysisSampleComponent() {
                           <TableCell className="italic text-sm text-center w-30">
                             <Input
                               type="number"
-                              value={row.afp}
+                              key={'afp'}
+                              value={formatNumber(row.afp) ?? ''}
                               onChange={(e) =>
                                 handleCellChange(i, 'afp', e.target.value)
                               }
                               className="w-full h-10 border-none bg-transparent px-3 pr-4 text-right focus:ring-2 focus:ring-purple-300 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0"
-                              placeholder={!row.afp ? '-' : row.afp}
+                              placeholder={
+                                !row.afp ? '-' : formatNumber(row.afp)
+                              }
                             />
                           </TableCell>
                           <TableCell className="italic text-sm text-center w-25">
                             <Input
                               type="number"
-                              value={row.mainPeak}
+                              key={'mainPeak'}
+                              value={row.mainPeak ?? ''}
                               onChange={(e) =>
                                 handleCellChange(i, 'mainPeak', e.target.value)
                               }
@@ -653,12 +665,15 @@ function AnalysisSampleComponent() {
                           <TableCell className="italic text-sm text-center w-30">
                             <Input
                               type="number"
-                              value={row.conc}
+                              key={'conc'}
+                              value={formatNumber(row.conc) ?? ''}
                               onChange={(e) =>
                                 handleCellChange(i, 'conc', e.target.value)
                               }
                               className="w-full h-10 border-none bg-transparent px-3 pr-4 text-right focus:ring-2 focus:ring-purple-300 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-inner-spin-button]:m-0"
-                              placeholder={!row.conc ? '-' : row.conc}
+                              placeholder={
+                                !row.conc ? '-' : formatNumber(row.conc)
+                              }
                             />
                           </TableCell>
                           <TableCell className="text-center">
@@ -693,7 +708,8 @@ function AnalysisSampleComponent() {
                           <TableCell>
                             <Input
                               type="text"
-                              value={row.note}
+                              key={'note'}
+                              value={row.note ?? ''}
                               onChange={(e) =>
                                 handleCellChange(i, 'note', e.target.value)
                               }
@@ -712,6 +728,7 @@ function AnalysisSampleComponent() {
             {parsedData.length > 0 && (
               <div className="flex items-center justify-center">
                 <Button
+                  key={'predict_btn'}
                   className="max-w-40 bg-purple-300 hover:bg-purple-400 flex items-center gap-2"
                   variant={'outline'}
                   disabled={isProcessing}
