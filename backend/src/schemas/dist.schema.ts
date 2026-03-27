@@ -23,6 +23,7 @@ export const DistSchema = z
     bin19: z.float32().transform((val) => val.toString()),
     bin20: z.float32().transform((val) => val.toString()),
     passQC: z.boolean().optional(),
+    note: z.string().optional(),
   })
   .strict();
 

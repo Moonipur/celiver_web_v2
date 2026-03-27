@@ -1,9 +1,14 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Outlet } from '@tanstack/react-router'
 
 export const Route = createFileRoute('/analysis')({
-  component: RouteComponent,
+  component: AnalysisLayout,
 })
 
-function RouteComponent() {
-  return <div>Analysis Page</div>
+function AnalysisLayout() {
+  return (
+    <div>
+      {/* If this Outlet is missing, $lotId.tsx will never render! */}
+      <Outlet />
+    </div>
+  )
 }

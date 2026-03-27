@@ -3,7 +3,8 @@ import { CasesArray, UpdateCase, UpdateClinCase } from "@/types";
 import { organization, cases } from "@/db/schema";
 import { asc, desc, eq, getTableColumns } from "drizzle-orm";
 
-const { baselineDisease, ...rest } = getTableColumns(cases);
+const { liverStatus, clinicalStatus, etiology, additionalEtiology, ...rest } =
+  getTableColumns(cases);
 
 export const getCases = async () => {
   return await db
@@ -23,6 +24,19 @@ export const getCaseByOrgSlug = async (orgSlug: string) => {
     .orderBy(asc(cases.hospitalCode));
 };
 
+export const getCaseByBCode = async (bCode: string) => {
+  const [caseData] = await db
+    .select({
+      ...rest,
+      orgName: organization.name,
+    })
+    .from(cases)
+    .leftJoin(organization, eq(cases.hospitalId, organization.id))
+    .where(eq(cases.biobankCode, bCode));
+
+  return caseData;
+};
+
 export const getCaseClinByOrgSlug = async (orgSlug: string) => {
   return await db
     .select({
@@ -36,9 +50,7 @@ export const getCaseClinByOrgSlug = async (orgSlug: string) => {
 
 export const getCaseLatestByOrgSlug = async (orgSlug: string) => {
   const [latestCase] = await db
-    .select({
-      ...rest,
-    })
+    .select({ biobankCode: cases.biobankCode })
     .from(cases)
     .innerJoin(organization, eq(cases.hospitalId, organization.id))
     .where(eq(organization.slug, orgSlug))

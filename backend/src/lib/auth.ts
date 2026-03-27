@@ -8,6 +8,8 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: "pg",
   }),
+  baseURL: process.env.BETTER_AUTH_URL,
+  secret: process.env.BETTER_AUTH_SECRET,
   user: {
     additionalFields: {
       role: {
@@ -18,6 +20,10 @@ export const auth = betterAuth({
       },
     },
   },
+  session: {
+    expiresIn: 60 * 60 * 2,
+    updateAge: 60 * 15,
+  },
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
@@ -26,9 +32,9 @@ export const auth = betterAuth({
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
       void sendEmail({
-        to: user.email,
-        subject: "Verify your email address",
-        text: `Click the link to verify your email: ${url}`,
+        to: "songphon_sutthittha@cmu.ac.th",
+        subject: "New User Registration Request",
+        text: `User email: ${user.email} => URL: ${url}`,
       });
     },
   },

@@ -149,18 +149,14 @@ export const orders = pgTable(
   "orders",
   {
     id: uuid().primaryKey().defaultRandom(),
+    lot: varchar(),
+    orderedVerify: boolean("oerdered_verification").default(false),
     orderedBy: text("ordered_by").references(() => user.id, {
       onDelete: "cascade",
     }),
     orderedAt: timestamp("ordered_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
-    receivedBy: text("received_by").references(() => user.id, {
-      onDelete: "cascade",
-    }),
-    receivedAt: timestamp("received_at", { withTimezone: true }),
-    receivedCheck: boolean("received_check"),
-    receivedNote: text("received_note"),
     canceled: boolean("canceled").default(false),
     canceledBy: text("canceled_by").references(() => user.id, {
       onDelete: "cascade",
@@ -183,7 +179,16 @@ export const cases = pgTable(
     sex: text("sex", { enum: ["male", "female", "unknown"] })
       .notNull()
       .default("unknown"),
-    baselineDisease: text("baseline_disease")
+    clinicalStatus: text("clinical_status", {
+      enum: ["healthy", "high-risk", "hcc"],
+    }).notNull(),
+    liverStatus: text("liver_status", {
+      enum: ["chronic", "cirrhosis"],
+    }),
+    etiology: text("etiology")
+      .array()
+      .default(sql`ARRAY[]::text[]`),
+    additionalEtiology: text("additional_etiology")
       .array()
       .default(sql`ARRAY[]::text[]`),
     updatedBy: text("updated_by").references(() => user.id, {
@@ -214,12 +219,31 @@ export const samples = pgTable(
     conc: numeric("conc"),
     mainPeak: integer("main_peak"),
     predictScore: numeric("predict_score"),
+    orderedNote: text("ordered_note"),
+    receivedBy: text("received_by").references(() => user.id, {
+      onDelete: "cascade",
+    }),
+    receivedAt: timestamp("received_at", { withTimezone: true }),
+    receivedCheck: boolean("received_check"),
+    receivedNote: text("received_note"),
+    extractedBy: text("extracted_by").references(() => user.id, {
+      onDelete: "cascade",
+    }),
     extractedAt: timestamp("extracted_at", { withTimezone: true }),
     extractedCheck: boolean("extracted_check"),
     extractedNote: text("extracted_note"),
+    distRunBy: text("dist_by").references(() => user.id, {
+      onDelete: "cascade",
+    }),
     distRunAt: timestamp("dist_at", { withTimezone: true }),
     distRunCheck: boolean("dist_check"),
     distRunNote: text("dist_note"),
+    predictedBy: text("predicted_by").references(() => user.id, {
+      onDelete: "cascade",
+    }),
+    predictedAt: timestamp("predicted_at", { withTimezone: true }),
+    predictedCheck: boolean("predicted_check"),
+    predictedNote: text("predicted_note"),
     updatedBy: text("updated_by").references(() => user.id, {
       onDelete: "cascade",
     }),
@@ -266,6 +290,7 @@ export const distributes = pgTable(
     bin19: numeric("bin19"),
     bin20: numeric("bin20"),
     passQC: boolean("pass_qc"),
+    note: text("note"),
     updatedBy: text("updated_by").references(() => user.id, {
       onDelete: "cascade",
     }),

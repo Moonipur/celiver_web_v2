@@ -5,6 +5,7 @@
     "jsxImportSource": "hono/jsx",
 
     "esModuleInterop": true,
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@/*": ["../backend/src/*"]

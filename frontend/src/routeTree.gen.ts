@@ -9,6 +9,8 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TrackingRouteImport } from './routes/tracking'
+import { Route as ReportRouteImport } from './routes/report'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as LoginRouteImport } from './routes/login'
@@ -18,9 +20,23 @@ import { Route as ClientOrderRouteImport } from './routes/client-order'
 import { Route as AnalysisRouteImport } from './routes/analysis'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as DashboardIndexRouteImport } from './routes/dashboard/index'
+import { Route as TrackingIndexRouteImport } from './routes/tracking/index'
+import { Route as ReportIndexRouteImport } from './routes/report/index'
 import { Route as AnalysisIndexRouteImport } from './routes/analysis/index'
+import { Route as TrackingLotIdRouteImport } from './routes/tracking/$lotId'
+import { Route as ReportSampleIdRouteImport } from './routes/report/$sampleId'
+import { Route as AnalysisLotIdBCodeRouteImport } from './routes/analysis/$lotId.$bCode'
 
+const TrackingRoute = TrackingRouteImport.update({
+  id: '/tracking',
+  path: '/tracking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportRoute = ReportRouteImport.update({
+  id: '/report',
+  path: '/report',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RegisterRoute = RegisterRouteImport.update({
   id: '/register',
   path: '/register',
@@ -66,14 +82,34 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DashboardIndexRoute = DashboardIndexRouteImport.update({
+const TrackingIndexRoute = TrackingIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => DashboardRoute,
+  getParentRoute: () => TrackingRoute,
+} as any)
+const ReportIndexRoute = ReportIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ReportRoute,
 } as any)
 const AnalysisIndexRoute = AnalysisIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => AnalysisRoute,
+} as any)
+const TrackingLotIdRoute = TrackingLotIdRouteImport.update({
+  id: '/$lotId',
+  path: '/$lotId',
+  getParentRoute: () => TrackingRoute,
+} as any)
+const ReportSampleIdRoute = ReportSampleIdRouteImport.update({
+  id: '/$sampleId',
+  path: '/$sampleId',
+  getParentRoute: () => ReportRoute,
+} as any)
+const AnalysisLotIdBCodeRoute = AnalysisLotIdBCodeRouteImport.update({
+  id: '/$lotId/$bCode',
+  path: '/$lotId/$bCode',
   getParentRoute: () => AnalysisRoute,
 } as any)
 
@@ -82,24 +118,35 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/analysis': typeof AnalysisRouteWithChildren
   '/client-order': typeof ClientOrderRoute
-  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/report': typeof ReportRouteWithChildren
+  '/tracking': typeof TrackingRouteWithChildren
+  '/report/$sampleId': typeof ReportSampleIdRoute
+  '/tracking/$lotId': typeof TrackingLotIdRoute
   '/analysis/': typeof AnalysisIndexRoute
-  '/dashboard/': typeof DashboardIndexRoute
+  '/report/': typeof ReportIndexRoute
+  '/tracking/': typeof TrackingIndexRoute
+  '/analysis/$lotId/$bCode': typeof AnalysisLotIdBCodeRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/client-order': typeof ClientOrderRoute
+  '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/report/$sampleId': typeof ReportSampleIdRoute
+  '/tracking/$lotId': typeof TrackingLotIdRoute
   '/analysis': typeof AnalysisIndexRoute
-  '/dashboard': typeof DashboardIndexRoute
+  '/report': typeof ReportIndexRoute
+  '/tracking': typeof TrackingIndexRoute
+  '/analysis/$lotId/$bCode': typeof AnalysisLotIdBCodeRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -107,13 +154,19 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/analysis': typeof AnalysisRouteWithChildren
   '/client-order': typeof ClientOrderRoute
-  '/dashboard': typeof DashboardRouteWithChildren
+  '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
   '/profile': typeof ProfileRoute
   '/register': typeof RegisterRoute
+  '/report': typeof ReportRouteWithChildren
+  '/tracking': typeof TrackingRouteWithChildren
+  '/report/$sampleId': typeof ReportSampleIdRoute
+  '/tracking/$lotId': typeof TrackingLotIdRoute
   '/analysis/': typeof AnalysisIndexRoute
-  '/dashboard/': typeof DashboardIndexRoute
+  '/report/': typeof ReportIndexRoute
+  '/tracking/': typeof TrackingIndexRoute
+  '/analysis/$lotId/$bCode': typeof AnalysisLotIdBCodeRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -127,19 +180,30 @@ export interface FileRouteTypes {
     | '/login'
     | '/profile'
     | '/register'
+    | '/report'
+    | '/tracking'
+    | '/report/$sampleId'
+    | '/tracking/$lotId'
     | '/analysis/'
-    | '/dashboard/'
+    | '/report/'
+    | '/tracking/'
+    | '/analysis/$lotId/$bCode'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/client-order'
+    | '/dashboard'
     | '/forgot-password'
     | '/login'
     | '/profile'
     | '/register'
+    | '/report/$sampleId'
+    | '/tracking/$lotId'
     | '/analysis'
-    | '/dashboard'
+    | '/report'
+    | '/tracking'
+    | '/analysis/$lotId/$bCode'
   id:
     | '__root__'
     | '/'
@@ -151,8 +215,14 @@ export interface FileRouteTypes {
     | '/login'
     | '/profile'
     | '/register'
+    | '/report'
+    | '/tracking'
+    | '/report/$sampleId'
+    | '/tracking/$lotId'
     | '/analysis/'
-    | '/dashboard/'
+    | '/report/'
+    | '/tracking/'
+    | '/analysis/$lotId/$bCode'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -160,15 +230,31 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   AnalysisRoute: typeof AnalysisRouteWithChildren
   ClientOrderRoute: typeof ClientOrderRoute
-  DashboardRoute: typeof DashboardRouteWithChildren
+  DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
   ProfileRoute: typeof ProfileRoute
   RegisterRoute: typeof RegisterRoute
+  ReportRoute: typeof ReportRouteWithChildren
+  TrackingRoute: typeof TrackingRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/tracking': {
+      id: '/tracking'
+      path: '/tracking'
+      fullPath: '/tracking'
+      preLoaderRoute: typeof TrackingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/report': {
+      id: '/report'
+      path: '/report'
+      fullPath: '/report'
+      preLoaderRoute: typeof ReportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/register': {
       id: '/register'
       path: '/register'
@@ -232,12 +318,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/dashboard/': {
-      id: '/dashboard/'
+    '/tracking/': {
+      id: '/tracking/'
       path: '/'
-      fullPath: '/dashboard/'
-      preLoaderRoute: typeof DashboardIndexRouteImport
-      parentRoute: typeof DashboardRoute
+      fullPath: '/tracking/'
+      preLoaderRoute: typeof TrackingIndexRouteImport
+      parentRoute: typeof TrackingRoute
+    }
+    '/report/': {
+      id: '/report/'
+      path: '/'
+      fullPath: '/report/'
+      preLoaderRoute: typeof ReportIndexRouteImport
+      parentRoute: typeof ReportRoute
     }
     '/analysis/': {
       id: '/analysis/'
@@ -246,31 +339,69 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AnalysisIndexRouteImport
       parentRoute: typeof AnalysisRoute
     }
+    '/tracking/$lotId': {
+      id: '/tracking/$lotId'
+      path: '/$lotId'
+      fullPath: '/tracking/$lotId'
+      preLoaderRoute: typeof TrackingLotIdRouteImport
+      parentRoute: typeof TrackingRoute
+    }
+    '/report/$sampleId': {
+      id: '/report/$sampleId'
+      path: '/$sampleId'
+      fullPath: '/report/$sampleId'
+      preLoaderRoute: typeof ReportSampleIdRouteImport
+      parentRoute: typeof ReportRoute
+    }
+    '/analysis/$lotId/$bCode': {
+      id: '/analysis/$lotId/$bCode'
+      path: '/$lotId/$bCode'
+      fullPath: '/analysis/$lotId/$bCode'
+      preLoaderRoute: typeof AnalysisLotIdBCodeRouteImport
+      parentRoute: typeof AnalysisRoute
+    }
   }
 }
 
 interface AnalysisRouteChildren {
   AnalysisIndexRoute: typeof AnalysisIndexRoute
+  AnalysisLotIdBCodeRoute: typeof AnalysisLotIdBCodeRoute
 }
 
 const AnalysisRouteChildren: AnalysisRouteChildren = {
   AnalysisIndexRoute: AnalysisIndexRoute,
+  AnalysisLotIdBCodeRoute: AnalysisLotIdBCodeRoute,
 }
 
 const AnalysisRouteWithChildren = AnalysisRoute._addFileChildren(
   AnalysisRouteChildren,
 )
 
-interface DashboardRouteChildren {
-  DashboardIndexRoute: typeof DashboardIndexRoute
+interface ReportRouteChildren {
+  ReportSampleIdRoute: typeof ReportSampleIdRoute
+  ReportIndexRoute: typeof ReportIndexRoute
 }
 
-const DashboardRouteChildren: DashboardRouteChildren = {
-  DashboardIndexRoute: DashboardIndexRoute,
+const ReportRouteChildren: ReportRouteChildren = {
+  ReportSampleIdRoute: ReportSampleIdRoute,
+  ReportIndexRoute: ReportIndexRoute,
 }
 
-const DashboardRouteWithChildren = DashboardRoute._addFileChildren(
-  DashboardRouteChildren,
+const ReportRouteWithChildren =
+  ReportRoute._addFileChildren(ReportRouteChildren)
+
+interface TrackingRouteChildren {
+  TrackingLotIdRoute: typeof TrackingLotIdRoute
+  TrackingIndexRoute: typeof TrackingIndexRoute
+}
+
+const TrackingRouteChildren: TrackingRouteChildren = {
+  TrackingLotIdRoute: TrackingLotIdRoute,
+  TrackingIndexRoute: TrackingIndexRoute,
+}
+
+const TrackingRouteWithChildren = TrackingRoute._addFileChildren(
+  TrackingRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
@@ -278,11 +409,13 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   AnalysisRoute: AnalysisRouteWithChildren,
   ClientOrderRoute: ClientOrderRoute,
-  DashboardRoute: DashboardRouteWithChildren,
+  DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
   ProfileRoute: ProfileRoute,
   RegisterRoute: RegisterRoute,
+  ReportRoute: ReportRouteWithChildren,
+  TrackingRoute: TrackingRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
