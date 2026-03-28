@@ -276,85 +276,73 @@ function AdminDashboardComponent() {
         </div>
 
         {/* --- ORGANIZATIONS TAB --- */}
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <CardTitle>Organization Directory</CardTitle>
-              <CardDescription>
-                Manage active organizations, update details, and manage
-                directories.
-              </CardDescription>
+        {/* ADD ORGANIZATION DIALOG */}
+        <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
+          <DialogTrigger asChild>
+            <Button className="flex items-center gap-2">
+              <Plus className="w-4 h-4" /> Add Organization
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Organization</DialogTitle>
+              <DialogDescription>
+                Create a new organization in the system.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="org-name" className="text-right">
+                  Name
+                </Label>
+                <Input
+                  id="org-name"
+                  value={newOrg.name}
+                  onChange={(e) =>
+                    setNewOrg({ ...newOrg, name: e.target.value })
+                  }
+                  className="col-span-3"
+                  placeholder="e.g. Acme Corp"
+                />
+              </div>
+
+              {/* NEW SLUG FIELD */}
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="org-slug" className="text-right">
+                  Slug
+                </Label>
+                <Input
+                  id="org-slug"
+                  value={newOrg.slug}
+                  onChange={(e) =>
+                    setNewOrg({ ...newOrg, slug: e.target.value })
+                  }
+                  className="col-span-3"
+                  placeholder="e.g. acme-corp"
+                />
+              </div>
+
+              {/* NEW BIOBANK FIELD */}
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="org-biobank" className="text-right">
+                  Biobank
+                </Label>
+                <Input
+                  id="org-biobank"
+                  value={newOrg.biobank}
+                  onChange={(e) =>
+                    setNewOrg({ ...newOrg, biobank: e.target.value })
+                  }
+                  className="col-span-3"
+                  placeholder="e.g. Primary Biobank"
+                />
+              </div>
             </div>
-
-            {/* ADD ORGANIZATION DIALOG */}
-            <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-              <DialogTrigger asChild>
-                <Button className="flex items-center gap-2">
-                  <Plus className="w-4 h-4" /> Add Organization
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Add New Organization</DialogTitle>
-                  <DialogDescription>
-                    Create a new organization in the system.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="org-name" className="text-right">
-                      Name
-                    </Label>
-                    <Input
-                      id="org-name"
-                      value={newOrg.name}
-                      onChange={(e) =>
-                        setNewOrg({ ...newOrg, name: e.target.value })
-                      }
-                      className="col-span-3"
-                      placeholder="e.g. Acme Corp"
-                    />
-                  </div>
-
-                  {/* NEW SLUG FIELD */}
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="org-slug" className="text-right">
-                      Slug
-                    </Label>
-                    <Input
-                      id="org-slug"
-                      value={newOrg.slug}
-                      onChange={(e) =>
-                        setNewOrg({ ...newOrg, slug: e.target.value })
-                      }
-                      className="col-span-3"
-                      placeholder="e.g. acme-corp"
-                    />
-                  </div>
-
-                  {/* NEW BIOBANK FIELD */}
-                  <div className="grid grid-cols-4 items-center gap-4">
-                    <Label htmlFor="org-biobank" className="text-right">
-                      Biobank
-                    </Label>
-                    <Input
-                      id="org-biobank"
-                      value={newOrg.biobank}
-                      onChange={(e) =>
-                        setNewOrg({ ...newOrg, biobank: e.target.value })
-                      }
-                      className="col-span-3"
-                      placeholder="e.g. Primary Biobank"
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button onClick={handleAddOrg}>Save Organization</Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          </CardHeader>
-        </Card>
+            <DialogFooter>
+              <Button onClick={handleAddOrg}>Save Organization</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     )
   }
