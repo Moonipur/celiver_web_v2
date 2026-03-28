@@ -278,11 +278,6 @@ function AdminDashboardComponent() {
         {/* --- ORGANIZATIONS TAB --- */}
         {/* ADD ORGANIZATION DIALOG */}
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-          <DialogTrigger asChild>
-            <Button className="flex items-center gap-2">
-              <Plus className="w-4 h-4" /> Add Organization
-            </Button>
-          </DialogTrigger>
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Add New Organization</DialogTitle>
