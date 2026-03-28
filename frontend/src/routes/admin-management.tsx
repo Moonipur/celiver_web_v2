@@ -92,35 +92,6 @@ function AdminDashboardComponent() {
   const router = useRouter()
   const { matrix } = Route.useLoaderData()
 
-  // --- 1. Handle Null/Empty State ---
-  if (!matrix.data) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4 text-center">
-        <div className="p-6 bg-muted rounded-full">
-          {/* Lucide icon for empty data */}
-          <DatabaseBackup className="w-12 h-12 text-muted-foreground" />
-        </div>
-        <div className="space-y-2">
-          <h2 className="text-2xl font-semibold tracking-tight">
-            No Data Available
-          </h2>
-          <p className="text-muted-foreground max-w-sm mx-auto">
-            We couldn't retrieve the admin matrix. This might be due to a
-            connection error or an empty database.
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <Button variant="outline" onClick={() => window.location.reload()}>
-            <RefreshCcw className="w-4 h-4 mr-2" /> Retry
-          </Button>
-          <Button onClick={() => setIsAddDialogOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" /> Create First Org
-          </Button>
-        </div>
-      </div>
-    )
-  }
-
   // Organization Dialog States
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
@@ -276,6 +247,35 @@ function AdminDashboardComponent() {
     admin: 'Admin',
     clinAdmin: 'Clinical Admin',
     superAdmin: 'Super Admin',
+  }
+
+  // --- 1. Handle Null/Empty State ---
+  if (!matrix.data) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-4 text-center">
+        <div className="p-6 bg-muted rounded-full">
+          {/* Lucide icon for empty data */}
+          <DatabaseBackup className="w-12 h-12 text-muted-foreground" />
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            No Data Available
+          </h2>
+          <p className="text-muted-foreground max-w-sm mx-auto">
+            We couldn't retrieve the admin matrix. This might be due to a
+            connection error or an empty database.
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <Button variant="outline" onClick={() => window.location.reload()}>
+            <RefreshCcw className="w-4 h-4 mr-2" /> Retry
+          </Button>
+          <Button onClick={() => setIsAddDialogOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" /> Create First Org
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
