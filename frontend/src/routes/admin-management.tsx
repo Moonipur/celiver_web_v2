@@ -79,14 +79,9 @@ export const Route = createFileRoute('/admin-management')({
         to: '/dashboard',
       })
     }
-
-    return {
-      session,
-    }
   },
-  loader: async ({ context }) => {
+  loader: async () => {
     return {
-      session: context.session,
       matrix: await DashboardAdmin(),
     }
   },

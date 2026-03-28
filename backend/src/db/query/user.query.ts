@@ -36,6 +36,7 @@ export const deleteUser = async (userId: string) => {
 };
 
 export const updateUser = async (data: UserUpdate) => {
+  // 1. Update the core User table
   const [userData] = await db
     .update(user)
     .set({
@@ -53,28 +54,43 @@ export const updateUser = async (data: UserUpdate) => {
       role: user.role,
     });
 
+  // 2. Look for existing organization membership
   const [searchMem] = await db
     .select({ organizationId: member.organizationId })
     .from(member)
     .where(eq(member.userId, userData.id));
 
+  // Case A: User has no record in 'member' table yet - Create it
   if (!searchMem) {
-    const [orgData] = await db
-      .insert(member)
-      .values({ organizationId: data.organizationId, userId: userData.id })
-      .returning({ organizationId: member.organizationId });
+    // Only insert if an organizationId was actually provided
+    if (data.organizationId) {
+      const [orgData] = await db
+        .insert(member)
+        .values({
+          organizationId: data.organizationId,
+          userId: userData.id,
+        })
+        .returning({ organizationId: member.organizationId });
 
-    return { ...userData, ...orgData };
+      return { ...userData, ...orgData };
+    }
+    return { ...userData, organizationId: null };
   }
 
+  // Case B: Organization changed - Update the record
+  // CRITICAL FIX: Added .where() clause here
   if (searchMem.organizationId !== data.organizationId) {
     const [orgData] = await db
       .update(member)
-      .set({ organizationId: data.organizationId, userId: userData.id })
+      .set({
+        organizationId: data.organizationId, // This handles null if unassigning
+      })
+      .where(eq(member.userId, userData.id)) // <--- THIS WAS MISSING
       .returning({ organizationId: member.organizationId });
 
     return { ...userData, ...orgData };
   }
 
+  // Case C: No change needed
   return { ...userData, organizationId: data.organizationId };
 };

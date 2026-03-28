@@ -54,6 +54,8 @@ interface NavLink {
   label: string
 }
 
+const rootApi = getRouteApi('__root__')
+
 export default function Header() {
   const router = useRouter()
   const navigate = useNavigate()
