@@ -462,13 +462,15 @@ function AnalysisSampleComponent() {
       })
     },
     onSuccess: (data) => {
-      // 3. Clear the temporary LocalStorage now that it's in the DB
-      localStorage.removeItem(storageKey)
+      if (data.data !== null) {
+        // 3. Clear the temporary LocalStorage now that it's in the DB
+        localStorage.removeItem(storageKey)
 
-      navigate({
-        to: '/report/$sampleId',
-        params: { sampleId: sample.sampleId },
-      })
+        navigate({
+          to: '/report/$sampleId',
+          params: { sampleId: sample.sampleId },
+        })
+      }
     },
     onError: (error) => {
       console.error('Failed to save data before prediction:', error)
@@ -640,7 +642,7 @@ function AnalysisSampleComponent() {
                             <Input
                               type="number"
                               key={'afp'}
-                              value={formatNumber(row.afp) ?? ''}
+                              value={row.afp ?? ''}
                               onChange={(e) =>
                                 handleCellChange(i, 'afp', e.target.value)
                               }
@@ -666,7 +668,7 @@ function AnalysisSampleComponent() {
                             <Input
                               type="number"
                               key={'conc'}
-                              value={formatNumber(row.conc) ?? ''}
+                              value={row.conc ?? ''}
                               onChange={(e) =>
                                 handleCellChange(i, 'conc', e.target.value)
                               }

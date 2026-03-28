@@ -114,6 +114,10 @@ predict.post(
       {} as Record<string, number>,
     );
 
+    if ("MainP" in averages) {
+      averages.MainP = Math.round(averages.MainP);
+    }
+
     const finalCfData = {
       ID: sampleId,
       Age: data[0].age,
