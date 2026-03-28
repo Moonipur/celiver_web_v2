@@ -343,3 +343,19 @@ export interface PatientRecord {
   addEtiology: string
   note: string
 }
+
+export type DashboardMtxType = {
+  caseCount: {
+    month: string
+    cases: number
+  }[]
+  caseClass: {
+    category: string
+    count: number
+  }[]
+  performance: {
+    accuracy: number | null
+    sensitivity: number | null
+    specificity: number | null
+  }
+}

@@ -34,7 +34,7 @@ const navLinksClinAdmin = [
   { to: '/', label: 'Home' },
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/client-order', label: 'Order' },
-  { to: '/clinical-data', label: 'Clinical' },
+  // { to: '/clinical-data', label: 'Clinical' },
   { to: '/about', label: 'About' },
 ]
 
@@ -45,7 +45,7 @@ const navLinksSuperAdmin = [
   { to: '/tracking', label: 'Tracking' },
   { to: '/analysis', label: 'Analysis' },
   { to: '/report', label: 'Report' },
-  { to: '/clinical-data', label: 'Clinical' },
+  // { to: '/clinical-data', label: 'Clinical' },
   { to: '/admin-management', label: 'Admin' },
 ]
 

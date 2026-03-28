@@ -56,8 +56,6 @@ export const logoutUser = createServerFn({ method: 'POST' }).handler(
       { headers: createHeader(), withCredentials: true },
     )
 
-    console.log(logoutResponse.data)
-
     deleteCookie('token')
 
     return logoutResponse.data

@@ -20,6 +20,7 @@ import {
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart'
 import { TrendingUp, Target, Activity } from 'lucide-react'
 import { getSessionFn } from '@/servers/user.functions'
+import { DashboardMatrix } from '@/servers/perform.function'
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: async () => {
@@ -35,26 +36,14 @@ export const Route = createFileRoute('/dashboard')({
       session,
     }
   },
-  // loader: () => ,
+  loader: async ({ context }) => {
+    return {
+      session: context.session,
+      matrix: await DashboardMatrix(),
+    }
+  },
   component: DashboardComponent,
 })
-
-// Mock data for the line chart
-const chartData = [
-  { month: 'Jan', cases: 2 },
-  { month: 'Feb', cases: 48 },
-  { month: 'Mar', cases: 50 },
-  { month: 'Apr', cases: 400 },
-  { month: 'May', cases: 300 },
-  { month: 'Jun', cases: 500 },
-]
-
-// Mock data for the bar chart
-const barChartData = [
-  { category: 'Healthy', count: 450 },
-  { category: 'High-risk', count: 820 },
-  { category: 'Liver Cancer', count: 310 },
-]
 
 const chartConfig = {
   cumulativeCases: {
@@ -71,11 +60,31 @@ const barChartConfig = {
 }
 
 function DashboardComponent() {
-  const totalCases = chartData.reduce((acc, curr) => acc + curr.cases, 0)
+  const { matrix } = Route.useLoaderData()
+
+  if (!matrix || !matrix.data) {
+    return (
+      <div className="flex h-[450px] items-center justify-center rounded-md border border-dashed p-8 text-center">
+        <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
+          <Activity className="h-10 w-10 text-muted-foreground" />
+          <h3 className="mt-4 text-lg font-semibold">No data available</h3>
+          <p className="mb-4 mt-2 text-sm text-muted-foreground">
+            We couldn't find any case data for the last 6 months. Try uploading
+            new samples.
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  const totalCases = matrix.data.caseCount.reduce(
+    (acc, curr) => acc + curr.cases,
+    0,
+  )
   const expectedCases = 1200
 
   let cumulativeSum = 0
-  const processedChartData = chartData.map((item) => {
+  const processedChartData = matrix.data.caseCount.map((item) => {
     cumulativeSum += item.cases
     return {
       ...item,
@@ -134,18 +143,31 @@ function DashboardComponent() {
           <CardContent className="pt-4">
             <div className="grid grid-cols-3 gap-4 text-center divide-x">
               <div className="flex flex-col space-y-1">
-                <span className="text-2xl font-bold text-green-600">94.2%</span>
+                <span className="text-2xl font-bold text-green-600">
+                  {matrix.data.performance.accuracy !== null
+                    ? matrix.data.performance.accuracy * 100
+                    : '-'}
+                  %
+                </span>
                 <span className="text-xs text-muted-foreground">Accuracy</span>
               </div>
               <div className="flex flex-col space-y-1">
-                <span className="text-2xl font-bold text-blue-600">89.5%</span>
+                <span className="text-2xl font-bold text-blue-600">
+                  {matrix.data.performance.sensitivity !== null
+                    ? matrix.data.performance.sensitivity * 100
+                    : '-'}
+                  %
+                </span>
                 <span className="text-xs text-muted-foreground">
                   Sensitivity
                 </span>
               </div>
               <div className="flex flex-col space-y-1">
                 <span className="text-2xl font-bold text-purple-600">
-                  96.8%
+                  {matrix.data.performance.specificity !== null
+                    ? matrix.data.performance.specificity * 100
+                    : '-'}
+                  %
                 </span>
                 <span className="text-xs text-muted-foreground">
                   Specificity
@@ -161,8 +183,8 @@ function DashboardComponent() {
         {/* Line Chart (Takes up 2/3 of the row on large screens) */}
         <Card className="lg:col-span-2 flex flex-col">
           <CardHeader>
-            <CardTitle>Case Growth</CardTitle>
-            <CardDescription>Monthly trend of new samples.</CardDescription>
+            <CardTitle>Sample Growth</CardTitle>
+            <CardDescription>Monthly trend of new cases.</CardDescription>
           </CardHeader>
           <CardContent className="flex-1">
             <ChartContainer config={chartConfig} className="h-[350px] w-full">
@@ -227,7 +249,7 @@ function DashboardComponent() {
               className="h-[350px] w-full"
             >
               <BarChart
-                data={barChartData}
+                data={matrix.data.caseClass}
                 layout="vertical"
                 margin={{
                   top: 0,
