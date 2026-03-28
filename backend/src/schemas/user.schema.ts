@@ -14,6 +14,15 @@ export const UserSchema = z
   })
   .strict();
 
+export const UserUpdateSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.email(),
+  role: RoleTypeSchema,
+  isVerified: z.boolean(),
+  organizationId: z.string(),
+});
+
 export const NewRoleSchema = z.object({
   userEmail: z.email(),
   newRole: RoleTypeSchema.default("client"),
@@ -45,5 +54,4 @@ export const UserRegistSchema = z.object({
   email: z.email(),
   password: z.string(),
   rePassword: z.string(),
-  organization: z.string(),
 });

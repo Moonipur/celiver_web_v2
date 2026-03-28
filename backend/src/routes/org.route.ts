@@ -173,7 +173,10 @@ orgs.delete(
     try {
       await deleteOrg(orgId);
 
-      return c.json({ message: "Deleted organization successful" }, 201);
+      return c.json(
+        { message: "Deleted organization successful", body: true },
+        201,
+      );
     } catch (error) {
       console.error("Error deleting organization: ", error);
       return c.json({ error: "Failed to delete organization" }, 500);

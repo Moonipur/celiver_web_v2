@@ -80,6 +80,15 @@ export type UserRoleType =
 export type User = InferSelectModel<typeof user>;
 export type NewUser = InferInsertModel<typeof user>;
 
+export type UserUpdate = {
+  id: string;
+  name: string;
+  email: string;
+  role: "client" | "admin" | "clinAdmin" | "superAdmin";
+  isVerified: boolean;
+  organizationId: string;
+};
+
 // Organization type
 export type Org = InferSelectModel<typeof organization>;
 export type NewOrg = InferInsertModel<typeof organization>;

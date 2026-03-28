@@ -104,7 +104,7 @@ function RegisterComponent() {
             </div>
 
             {/* --- Organization --- */}
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <Label htmlFor="organization">Organization</Label>
               <div className="relative">
                 <Building2 className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -117,7 +117,7 @@ function RegisterComponent() {
                   disabled={isLoading}
                 />
               </div>
-            </div>
+            </div> */}
 
             {/* --- Email --- */}
             <div className="space-y-2">

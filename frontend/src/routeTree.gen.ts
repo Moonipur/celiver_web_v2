@@ -19,6 +19,7 @@ import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as ClinicalDataRouteImport } from './routes/clinical-data'
 import { Route as ClientOrderRouteImport } from './routes/client-order'
 import { Route as AnalysisRouteImport } from './routes/analysis'
+import { Route as AdminManagementRouteImport } from './routes/admin-management'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TrackingIndexRouteImport } from './routes/tracking/index'
@@ -78,6 +79,11 @@ const AnalysisRoute = AnalysisRouteImport.update({
   path: '/analysis',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminManagementRoute = AdminManagementRouteImport.update({
+  id: '/admin-management',
+  path: '/admin-management',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -122,6 +128,7 @@ const AnalysisLotIdBCodeRoute = AnalysisLotIdBCodeRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin-management': typeof AdminManagementRoute
   '/analysis': typeof AnalysisRouteWithChildren
   '/client-order': typeof ClientOrderRoute
   '/clinical-data': typeof ClinicalDataRoute
@@ -142,6 +149,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin-management': typeof AdminManagementRoute
   '/client-order': typeof ClientOrderRoute
   '/clinical-data': typeof ClinicalDataRoute
   '/dashboard': typeof DashboardRoute
@@ -160,6 +168,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/admin-management': typeof AdminManagementRoute
   '/analysis': typeof AnalysisRouteWithChildren
   '/client-order': typeof ClientOrderRoute
   '/clinical-data': typeof ClinicalDataRoute
@@ -182,6 +191,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/admin-management'
     | '/analysis'
     | '/client-order'
     | '/clinical-data'
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/admin-management'
     | '/client-order'
     | '/clinical-data'
     | '/dashboard'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/about'
+    | '/admin-management'
     | '/analysis'
     | '/client-order'
     | '/clinical-data'
@@ -240,6 +252,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  AdminManagementRoute: typeof AdminManagementRoute
   AnalysisRoute: typeof AnalysisRouteWithChildren
   ClientOrderRoute: typeof ClientOrderRoute
   ClinicalDataRoute: typeof ClinicalDataRoute
@@ -322,6 +335,13 @@ declare module '@tanstack/react-router' {
       path: '/analysis'
       fullPath: '/analysis'
       preLoaderRoute: typeof AnalysisRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin-management': {
+      id: '/admin-management'
+      path: '/admin-management'
+      fullPath: '/admin-management'
+      preLoaderRoute: typeof AdminManagementRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -427,6 +447,7 @@ const TrackingRouteWithChildren = TrackingRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  AdminManagementRoute: AdminManagementRoute,
   AnalysisRoute: AnalysisRouteWithChildren,
   ClientOrderRoute: ClientOrderRoute,
   ClinicalDataRoute: ClinicalDataRoute,

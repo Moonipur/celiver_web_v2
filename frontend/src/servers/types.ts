@@ -359,3 +359,49 @@ export type DashboardMtxType = {
     specificity: number | null
   }
 }
+
+export type Organization = {
+  id: string
+  name: string
+  slug: string
+  biobank: string
+  members: number
+}
+
+export type OrgInput = {
+  name: string
+  slug: string
+  biobank: string
+  metadata?: string
+}
+
+export type User = {
+  id: string
+  name: string
+  email: string
+  role: 'client' | 'admin' | 'clinAdmin' | 'superAdmin'
+  isVerified: boolean
+  organizationId: string
+}
+
+export type AdminDashboard = {
+  users: {
+    id: string
+    name: string
+    email: string
+    isVerified: boolean
+    role: 'client' | 'admin' | 'clinAdmin' | 'superAdmin'
+    organizationId: string
+  }[]
+  orgs: {
+    id: string
+    name: string
+    slug: string
+    biobank: string
+    members: number
+  }[]
+}
+
+export type Slugs = {
+  slug: string
+}

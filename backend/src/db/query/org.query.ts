@@ -55,7 +55,7 @@ export const getMember = async (userId: string) => {
       name: organization.name,
       hCode: organization.slug,
       bCode: organization.biobank,
-      userName: user.name
+      userName: user.name,
     })
     .from(member)
     .innerJoin(organization, eq(member.organizationId, organization.id))

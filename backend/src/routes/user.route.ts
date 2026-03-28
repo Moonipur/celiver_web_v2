@@ -4,9 +4,19 @@ import {
   adminRoleMiddleware,
   clinAdminRoleMiddleware,
 } from "@/middlewares/role.middleware";
-import { getUser, getUserSession, updateUserRole } from "@/db/query/user.query";
+import {
+  deleteUser,
+  getUser,
+  getUserSession,
+  updateUser,
+  updateUserRole,
+} from "@/db/query/user.query";
 import type { HonoEnv } from "@/types";
-import { UserRoleValidator } from "@/validators/user.validator";
+import {
+  UserRoleValidator,
+  UserUpdateValidator,
+  UserValidator,
+} from "@/validators/user.validator";
 import { getMember, getOrgDetail } from "@/db/query/org.query";
 
 export const users = new Hono<HonoEnv>();
@@ -63,3 +73,52 @@ users.get("/getSession/:token", async (c) => {
     return c.json({ error: "Failed to fetch user role" }, 500);
   }
 });
+
+users.delete(
+  "/delete/:userId",
+  clientRoleMiddleware,
+  adminRoleMiddleware,
+  clinAdminRoleMiddleware,
+  async (c) => {
+    const { userId } = c.req.param();
+
+    try {
+      await deleteUser(userId);
+
+      return c.json(
+        {
+          message: "Deleted user successful",
+          body: true,
+        },
+        201,
+      );
+    } catch (error) {
+      return c.json({ error: "Failed to delete user" }, 500);
+    }
+  },
+);
+
+users.post(
+  "/update",
+  clientRoleMiddleware,
+  adminRoleMiddleware,
+  clinAdminRoleMiddleware,
+  UserUpdateValidator,
+  async (c) => {
+    const data = c.req.valid("json");
+
+    try {
+      await updateUser(data);
+
+      return c.json(
+        {
+          message: "Deleted user successful",
+          body: true,
+        },
+        201,
+      );
+    } catch (error) {
+      return c.json({ error: "Failed to delete user" }, 500);
+    }
+  },
+);

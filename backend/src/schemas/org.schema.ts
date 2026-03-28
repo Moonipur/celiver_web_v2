@@ -9,6 +9,8 @@ export const OrgSchema = z
   })
   .strict();
 
+export const OrgUpdateSchema = OrgSchema.partial();
+
 export const OrgMemberSchema = z.object({
   email: z.email(),
   orgSlug: z.string().max(14, "Slug must less than 14 letters"),

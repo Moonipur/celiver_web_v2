@@ -12,6 +12,7 @@ import { tracking } from "@/routes/tracking.route";
 import { predict } from "./routes/predict.route";
 import { report } from "./routes/report.route";
 import { perform } from "./routes/perform.route";
+import { admins } from "./routes/admin.route";
 
 const app = new Hono();
 
@@ -28,7 +29,7 @@ app.use(
   "/api/*",
   cors({
     origin: process.env.FRONTEND_URL!,
-    allowHeaders: ["Content-Type", "Authorization"],
+    allowHeaders: ["Content-Type", "Authorization", "x-requested-with"],
     allowMethods: ["POST", "GET", "OPTIONS"],
     exposeHeaders: ["Content-Length"],
     maxAge: 600,
@@ -49,7 +50,8 @@ app
   .route("/api/tracking", tracking)
   .route("/api/predict", predict)
   .route("/api/report", report)
-  .route("/api/perform", perform);
+  .route("/api/perform", perform)
+  .route("/api/admin", admins);
 
 export default {
   port: 8000,
