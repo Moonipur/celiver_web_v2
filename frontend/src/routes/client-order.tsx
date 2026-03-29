@@ -115,10 +115,11 @@ function RouteComponent() {
 
   const handleAddOrUpdate = async () => {
     // Validation
-    if (currentCode.length < 5) {
-      setError('Patient code is too short')
+    if (currentCode.split('-')[1]?.length !== 5) {
+      setError('Patient code must have 5 digits. (example: CMI-12345)')
       return
     }
+
     if (!currentAge || !currentSex || !currentClinical) {
       setError('Please fill in required fields: Age, Sex, and Clinical Status')
       return
