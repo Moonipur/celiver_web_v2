@@ -4,6 +4,7 @@ import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { tanstackStartCookies } from "better-auth/tanstack-start";
 import { db } from "@/db/db";
 import { sendEmail } from "@/lib/email";
+import { sendNotify } from "./telegram";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {
@@ -32,11 +33,7 @@ export const auth = betterAuth({
   emailVerification: {
     sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
-      void sendEmail({
-        to: "songphon_sutthittha@cmu.ac.th",
-        subject: "New User Registration Request",
-        text: `User email: ${user.email} => URL: ${url}`,
-      });
+      await sendNotify(user.name, user.email);
     },
   },
   plugins: [openAPI(), tanstackStartCookies()],

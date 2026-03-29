@@ -54,3 +54,41 @@ export const sendTelegram = async (
     return { ok: false, error };
   }
 };
+
+export const sendNotify = async (
+  name: string,
+  email: string,
+): Promise<void> => {
+  const BOT_TOKEN = process.env.BOT_TOKEN!;
+  const CHAT_ID = process.env.CHAT_ADMIN!;
+
+  const date = new Date();
+  const timeZone = "Asia/Bangkok";
+  const zonedDate = toZonedTime(date, timeZone);
+
+  const formattedDate = format(zonedDate, "dd/MM/yy-HH:mm", { timeZone });
+
+  // 2. Combine into the final HTML message
+  const message = [
+    `<b>📦 New Registration</b>`,
+    `<b>Date:</b> <code>${formattedDate}</code>`,
+    `<b>Name:</b> <code>${name}</code>`,
+    `<b>Email:</b> <code>${email}</code>`,
+  ].join("\n");
+
+  const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+  try {
+    await fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: CHAT_ID,
+        text: message,
+        parse_mode: "HTML",
+      }),
+    });
+  } catch (error) {
+    console.error("Telegram Notification Failed:", error);
+  }
+};

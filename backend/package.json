@@ -16,7 +16,6 @@
     "drizzle-seed": "^0.3.1",
     "hono": "^4.11.6",
     "hono-rate-limiter": "^0.5.3",
-    "nodemailer": "^7.0.12",
     "papaparse": "^5.5.3",
     "pg": "^8.17.2",
     "zod": "^4.3.6",
@@ -24,7 +23,6 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "@types/nodemailer": "^7.0.9",
     "@types/papaparse": "^5.5.2",
     "@types/pg": "^8.16.0",
     "drizzle-kit": "^0.31.8"
