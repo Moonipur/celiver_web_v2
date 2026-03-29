@@ -103,7 +103,7 @@ export const getModelPerformance = async () => {
   const fp = matrix?.fp || 0;
   const fn = matrix?.fn || 0;
 
-  if (tp + fp < 3 && tn + fn < 3) {
+  if (tp + fn < 3 || tn + fp < 3) {
     return {
       accuracy: null,
       sensitivity: null,

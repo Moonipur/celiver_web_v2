@@ -21,6 +21,7 @@ import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart'
 import { TrendingUp, Target, Activity } from 'lucide-react'
 import { getSessionFn } from '@/servers/user.functions'
 import { DashboardMatrix } from '@/servers/perform.function'
+import { formatNumber } from '@/lib/utils'
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: async () => {
@@ -150,7 +151,7 @@ function DashboardComponent() {
               <div className="flex flex-col space-y-1">
                 <span className="text-2xl font-bold text-green-600">
                   {matrix.data.performance.accuracy !== null
-                    ? matrix.data.performance.accuracy * 100
+                    ? (matrix.data.performance.accuracy * 100).toFixed(1)
                     : '-'}
                   %
                 </span>
@@ -159,7 +160,7 @@ function DashboardComponent() {
               <div className="flex flex-col space-y-1">
                 <span className="text-2xl font-bold text-blue-600">
                   {matrix.data.performance.sensitivity !== null
-                    ? matrix.data.performance.sensitivity * 100
+                    ? (matrix.data.performance.sensitivity * 100).toFixed(1)
                     : '-'}
                   %
                 </span>
@@ -170,7 +171,7 @@ function DashboardComponent() {
               <div className="flex flex-col space-y-1">
                 <span className="text-2xl font-bold text-purple-600">
                   {matrix.data.performance.specificity !== null
-                    ? matrix.data.performance.specificity * 100
+                    ? (matrix.data.performance.specificity * 100).toFixed(1)
                     : '-'}
                   %
                 </span>
