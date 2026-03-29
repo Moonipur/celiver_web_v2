@@ -103,16 +103,16 @@ export const getModelPerformance = async () => {
   const fp = matrix?.fp || 0;
   const fn = matrix?.fn || 0;
 
-  // 3. Calculate Metrics in JavaScript
-  const total = tp + tn + fp + fn;
-
-  if (total < 10) {
+  if (tp + fp < 3 && tn + fn < 3) {
     return {
       accuracy: null,
       sensitivity: null,
       specificity: null,
     };
   }
+
+  // 3. Calculate Metrics in JavaScript
+  const total = tp + tn + fp + fn;
 
   // Prevent division by zero errors with ternary operators
   const accuracy = total > 0 ? (tp + tn) / total : 0;

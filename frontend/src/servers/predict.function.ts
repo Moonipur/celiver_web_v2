@@ -41,7 +41,7 @@ export const predictScoreFn = createServerFn({ method: 'POST' })
   .inputValidator(PredictInputSchema)
   .handler(async ({ context, data }) => {
     try {
-      const score = await api.post<ApiResponse<PredictScore>>(
+      const score = await api.post<ApiResponse<PredictScore | null>>(
         `/api/predict/analysis/${data.sampleId}`,
         data.analysisData,
         {

@@ -93,6 +93,13 @@ export type UserUpdate = {
 export type Org = InferSelectModel<typeof organization>;
 export type NewOrg = InferInsertModel<typeof organization>;
 
+export type UpdateOrg = {
+  id: string;
+  name: string;
+  slug: string;
+  biobank: string;
+};
+
 export interface SampleType {
   id: string;
   biobankCode?: string;

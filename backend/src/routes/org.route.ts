@@ -15,7 +15,11 @@ import {
   deleteOrg,
 } from "@/db/query/org.query";
 import type { HonoEnv } from "@/types";
-import { OrgMemberValidator, OrgValidator } from "@/validators/org.validator";
+import {
+  OrgMemberValidator,
+  OrgUpdateValidator,
+  OrgValidator,
+} from "@/validators/org.validator";
 import { authMiddleware } from "@/middlewares/auth.middleware";
 
 export const orgs = new Hono<HonoEnv>();
@@ -143,7 +147,7 @@ orgs.post(
   clientRoleMiddleware,
   adminRoleMiddleware,
   clinAdminRoleMiddleware,
-  OrgValidator,
+  OrgUpdateValidator,
   async (c) => {
     const user = c.get("user");
     const orgData = c.req.valid("json");

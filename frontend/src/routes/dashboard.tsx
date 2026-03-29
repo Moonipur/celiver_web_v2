@@ -77,11 +77,16 @@ function DashboardComponent() {
     )
   }
 
-  const totalCases = matrix.data.caseCount.reduce(
+  const totalSamples = matrix.data.caseCount.reduce(
     (acc, curr) => acc + curr.cases,
     0,
   )
-  const expectedCases = 1200
+  const expectedSamples = 1200
+
+  const totalCases = matrix.data.caseClass.reduce(
+    (acc, curr) => acc + curr.count,
+    0,
+  )
 
   let cumulativeSum = 0
   const processedChartData = matrix.data.caseCount.map((item) => {
@@ -106,7 +111,7 @@ function DashboardComponent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {totalCases.toLocaleString()}
+              {totalSamples.toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">
               Cumulated samples recorded
@@ -124,7 +129,7 @@ function DashboardComponent() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {expectedCases.toLocaleString()}
+              {expectedSamples.toLocaleString()}
             </div>
             <p className="text-xs text-muted-foreground">
               Samples volume for model validation
@@ -222,7 +227,7 @@ function DashboardComponent() {
                   dot={true}
                 />
                 <ReferenceLine
-                  y={expectedCases}
+                  y={expectedSamples}
                   label={{
                     value: 'Expected',
                     position: 'insideTopRight',
@@ -240,7 +245,7 @@ function DashboardComponent() {
         {/* Horizontal Bar Chart (Takes up 1/3 of the row on large screens) */}
         <Card className="flex flex-col">
           <CardHeader>
-            <CardTitle>Case Distribution</CardTitle>
+            <CardTitle>Case Distribution (n={totalCases})</CardTitle>
             <CardDescription>Total count by category.</CardDescription>
           </CardHeader>
           <CardContent className="flex-1">

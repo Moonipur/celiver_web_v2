@@ -9,7 +9,9 @@ export const OrgSchema = z
   })
   .strict();
 
-export const OrgUpdateSchema = OrgSchema.partial();
+export const OrgUpdateSchema = OrgSchema.omit({ metadata: true }).extend({
+  id: z.string(),
+});
 
 export const OrgMemberSchema = z.object({
   email: z.email(),

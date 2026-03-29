@@ -369,10 +369,10 @@ export type Organization = {
 }
 
 export type OrgInput = {
+  id: string
   name: string
   slug: string
   biobank: string
-  metadata?: string
 }
 
 export type User = {

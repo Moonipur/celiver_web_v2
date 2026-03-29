@@ -471,6 +471,9 @@ function AnalysisSampleComponent() {
           params: { sampleId: sample.sampleId },
         })
       }
+      console.error(
+        'Failed to predict! (Number of run must more than or equeal 2)',
+      )
     },
     onError: (error) => {
       console.error('Failed to save data before prediction:', error)

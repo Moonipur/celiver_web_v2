@@ -209,7 +209,11 @@ function AdminDashboardComponent() {
     }
 
     createOrgMutation.mutate({
-      data: { name: newOrg.name, slug: newOrg.slug, biobank: newOrg.biobank },
+      data: {
+        name: newOrg.name,
+        slug: newOrg.slug.toUpperCase(),
+        biobank: newOrg.biobank.toUpperCase(),
+      },
     })
   }
 
@@ -238,7 +242,14 @@ function AdminDashboardComponent() {
   // --- Triggered by the "Save Changes" button ---
   const handleUpdateOrg = () => {
     if (editingOrg) {
-      updateOrgMutation.mutate({ data: { ...editingOrg } })
+      updateOrgMutation.mutate({
+        data: {
+          id: editingOrg.id,
+          name: editingOrg.name,
+          slug: editingOrg.slug.toUpperCase(),
+          biobank: editingOrg.biobank.toUpperCase(),
+        },
+      })
     }
   }
 
@@ -312,7 +323,7 @@ function AdminDashboardComponent() {
                   onChange={(e) =>
                     setNewOrg({ ...newOrg, slug: e.target.value })
                   }
-                  className="col-span-3"
+                  className="col-span-3 uppercase"
                   placeholder="e.g. acme-corp"
                 />
               </div>
@@ -326,9 +337,12 @@ function AdminDashboardComponent() {
                   id="org-biobank"
                   value={newOrg.biobank}
                   onChange={(e) =>
-                    setNewOrg({ ...newOrg, biobank: e.target.value })
+                    setNewOrg({
+                      ...newOrg,
+                      biobank: e.target.value,
+                    })
                   }
-                  className="col-span-3"
+                  className="col-span-3 uppercase"
                   placeholder="e.g. Primary Biobank"
                 />
               </div>
@@ -507,9 +521,12 @@ function AdminDashboardComponent() {
                         id="org-slug"
                         value={newOrg.slug}
                         onChange={(e) =>
-                          setNewOrg({ ...newOrg, slug: e.target.value })
+                          setNewOrg({
+                            ...newOrg,
+                            slug: e.target.value,
+                          })
                         }
-                        className="col-span-3"
+                        className="col-span-3 uppercase"
                         placeholder="e.g. acme-corp"
                       />
                     </div>
@@ -523,9 +540,12 @@ function AdminDashboardComponent() {
                         id="org-biobank"
                         value={newOrg.biobank}
                         onChange={(e) =>
-                          setNewOrg({ ...newOrg, biobank: e.target.value })
+                          setNewOrg({
+                            ...newOrg,
+                            biobank: e.target.value,
+                          })
                         }
-                        className="col-span-3"
+                        className="col-span-3 uppercase"
                         placeholder="e.g. Primary Biobank"
                       />
                     </div>
@@ -740,9 +760,12 @@ function AdminDashboardComponent() {
                   id="edit-org-slug"
                   value={editingOrg.slug}
                   onChange={(e) =>
-                    setEditingOrg({ ...editingOrg, slug: e.target.value })
+                    setEditingOrg({
+                      ...editingOrg,
+                      slug: e.target.value,
+                    })
                   }
-                  className="col-span-3"
+                  className="col-span-3 uppercase"
                 />
               </div>
 
@@ -755,9 +778,12 @@ function AdminDashboardComponent() {
                   id="edit-org-biobank"
                   value={editingOrg.biobank}
                   onChange={(e) =>
-                    setEditingOrg({ ...editingOrg, biobank: e.target.value })
+                    setEditingOrg({
+                      ...editingOrg,
+                      biobank: e.target.value,
+                    })
                   }
-                  className="col-span-3"
+                  className="col-span-3 uppercase"
                 />
               </div>
             </div>

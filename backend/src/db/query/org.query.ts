@@ -1,5 +1,5 @@
 import { db } from "@/db/db";
-import { NewOrg } from "@/types";
+import { NewOrg, UpdateOrg } from "@/types";
 import { user, organization, member } from "@/db/schema";
 import { eq } from "drizzle-orm";
 
@@ -93,12 +93,17 @@ export const addOrgMember = async (userEmail: string, orgSlug: string) => {
   return memberdetail;
 };
 
-export const updateOrg = async (userId: string, changingOrg: NewOrg) => {
+export const updateOrg = async (userId: string, changingOrg: UpdateOrg) => {
   const [changedOrg] = await db
     .update(organization)
     .set({ ...changingOrg, updatedBy: userId })
-    .where(eq(organization.slug, changingOrg.slug))
-    .returning();
+    .where(eq(organization.id, changingOrg.id))
+    .returning({
+      id: organization.id,
+      name: organization.name,
+      slug: organization.slug,
+      biobank: organization.biobank,
+    });
 
   return changedOrg;
 };

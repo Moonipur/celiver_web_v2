@@ -16,6 +16,21 @@ export const OrgValidator = zValidator("json", OrgSchema, (result, c) => {
   }
 });
 
+export const OrgUpdateValidator = zValidator(
+  "json",
+  OrgUpdateSchema,
+  (result, c) => {
+    if (!result.success) {
+      return c.json(
+        {
+          error: result.error.issues.map((issue) => issue.message),
+        },
+        400,
+      );
+    }
+  },
+);
+
 export const OrgMemberValidator = zValidator(
   "json",
   OrgMemberSchema,

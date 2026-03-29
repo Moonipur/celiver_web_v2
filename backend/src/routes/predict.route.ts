@@ -102,37 +102,16 @@ predict.post(
         "X241.250": d.bin20,
       }));
 
-    const averages = cfData.reduce(
-      (acc, row, _, { length }) => {
-        Object.keys(row).forEach((key) => {
-          const val = Number(row[key as keyof typeof row]) || 0;
-          // Sum the values; on the last iteration, divide by length
-          acc[key] = (acc[key] || 0) + val / length;
-        });
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
-
-    if ("MainP" in averages) {
-      averages.MainP = Math.round(averages.MainP);
-    }
-
-    const finalCfData = {
-      ID: sampleId,
-      Age: data[0].age,
-      Sex: data[0].sex === "male" ? "M" : "F",
-      ...averages,
-    };
-
     const distData = data.map((row) => {
       // Create an object to hold the stringified bins
       const binStrings: Record<string, string> = {};
 
       for (let i = 1; i <= 20; i++) {
         const key = `bin${i}` as keyof typeof row;
-        // Convert to string and handle potential null/undefined
-        binStrings[`bin${i}`] = row[key]?.toString() ?? "0";
+
+        // Force conversion to number, then format
+        const val = Number(row[key]) || 0;
+        binStrings[`bin${i}`] = val.toFixed(4);
       }
 
       return {
@@ -163,31 +142,71 @@ predict.post(
         await addDists(insertsDist);
       }
 
-      // Save file
-      const filePath = exportCSV(finalCfData, "final_cfDNA_dist");
+      if (cfData.length >= 2) {
+        const averages = cfData.reduce(
+          (acc, row, _, { length }) => {
+            Object.keys(row).forEach((key) => {
+              const val = Number(row[key as keyof typeof row]) || 0;
+              acc[key] = (acc[key] || 0) + val / length;
+            });
+            return acc;
+          },
+          {} as Record<string, number>,
+        );
 
-      // Predict CEliver score
-      const CEliverScore = await runCEliver();
+        if ("AFP" in averages) {
+          averages.AFP = Math.round(averages.AFP * 100) / 100;
+        }
 
-      // Remove file
-      removeCSV(filePath);
+        if ("MainP" in averages) {
+          averages.MainP = Math.round(averages.MainP);
+        }
 
-      // Update predict score / lab varaibles
-      await updateLabVar(user.id, {
-        sampleId: sampleId,
-        afp: averages.AFP,
-        mainPeak: averages.MainP,
-        conc: averages.Total,
-        score: CEliverScore,
-      });
+        if ("Total" in averages) {
+          averages.Total = Math.round(averages.Total * 100) / 100;
+        }
 
-      return c.json({
-        message: "Fetched orders successful",
-        body: {
+        const finalCfData = {
+          ID: sampleId,
+          Age: data[0].age,
+          Sex: data[0].sex === "male" ? "M" : "F",
+          ...averages,
+        };
+
+        // Save file
+        const filePath = exportCSV(finalCfData, "final_cfDNA_dist");
+
+        // Predict CEliver score
+        const CEliverScore = await runCEliver();
+
+        // Remove file
+        removeCSV(filePath);
+
+        // Update predict score / lab varaibles
+        await updateLabVar(user.id, {
           sampleId: sampleId,
+          afp: averages.AFP,
+          mainPeak: averages.MainP,
+          conc: averages.Total,
           score: CEliverScore,
+        });
+
+        return c.json({
+          message: "Predicted successful",
+          body: {
+            sampleId: sampleId,
+            score: CEliverScore,
+          },
+        });
+      }
+
+      return c.json(
+        {
+          message: "Predicted fail",
+          body: null,
         },
-      });
+        404,
+      );
     } catch (error) {
       console.error("Error predicting: ", error);
       return c.json({ error: "Failed to predict data" }, 500);
