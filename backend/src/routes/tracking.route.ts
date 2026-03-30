@@ -26,26 +26,28 @@ tracking.use(authMiddleware);
 tracking.get("/", clientRoleMiddleware, async (c) => {
   try {
     const orderList = await getOrders();
-    const trackPromises = orderList.map(async (item) => {
-      const org = await getMember(item.orderedBy!);
-      const sampleList = await getSampleByOrderId(item.id);
+    const track = await Promise.all(
+      orderList.map(async (item) => {
+        const org = await getMember(item.orderedBy!);
+        const sampleList = await getSampleByOrderId(item.id);
 
-      return {
-        lotId: item.lot,
-        customerName: org.userName,
-        status:
-          item.canceled === true
-            ? "canceled"
-            : StatusClassify(
-                sampleList[0].receivedCheck,
-                sampleList[0].extractedCheck,
-                sampleList[0].distRunCheck,
-                sampleList[0].predictedCheck,
-              ),
-        orderDate: item.orderedAt,
-        lastLocation: org.name,
-      };
-    });
+        return {
+          lotId: item.lot,
+          customerName: org.userName,
+          status:
+            item.canceled === true
+              ? "canceled"
+              : StatusClassify(
+                  sampleList[0].receivedCheck,
+                  sampleList[0].extractedCheck,
+                  sampleList[0].distRunCheck,
+                  sampleList[0].predictedCheck,
+                ),
+          orderDate: item.orderedAt,
+          lastLocation: org.name,
+        };
+      }),
+    );
 
     const track = await Promise.all(trackPromises);
 
