@@ -34,6 +34,7 @@ const navLinksClinAdmin = [
   { to: '/', label: 'Home' },
   { to: '/dashboard', label: 'Dashboard' },
   { to: '/client-order', label: 'Order' },
+  { to: '/tracking', label: 'Tracking' },
   // { to: '/clinical-data', label: 'Clinical' },
   { to: '/about', label: 'About' },
 ]

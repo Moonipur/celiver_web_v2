@@ -52,6 +52,7 @@ import {
   getOrderByLot,
   updateOrderStatus,
 } from '@/servers/tracking.function'
+import { toast } from 'sonner'
 
 const stagesConfig = {
   shipped: {
@@ -86,7 +87,7 @@ export const Route = createFileRoute('/tracking/$lotId')({
       })
     }
 
-    if (session?.user.role === 'client' || session?.user.role === 'clinAdmin') {
+    if (session?.user.role === 'client') {
       throw redirect({
         to: '/dashboard',
       })
@@ -109,7 +110,7 @@ export const Route = createFileRoute('/tracking/$lotId')({
 })
 
 function TrackingLotComponent() {
-  const { lotFound, data } = Route.useLoaderData()
+  const { session, lotFound, data } = Route.useLoaderData()
 
   const router = useRouter()
 
@@ -199,6 +200,11 @@ function TrackingLotComponent() {
 
   const handleUpdate = async (samples: QCSample[] | undefined) => {
     if (!samples) return
+
+    if (session.user.role === 'client' || session.user.role === 'clinAdmin') {
+      toast.error('You cannot edit tracking data!')
+      return
+    }
 
     const finalSamples = samples.map((item) => {
       if (isPassAll) {

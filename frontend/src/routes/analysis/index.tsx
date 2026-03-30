@@ -89,6 +89,7 @@ function AnalysisComponent() {
 
   // Initialize tableData as an empty array
   const [tableData, setTableData] = useState<any[]>([])
+  const [error, setError] = useState<string | null>(null)
 
   // SYNC: Whenever the database 'sample' changes, update our editable state
   useEffect(() => {
@@ -100,6 +101,11 @@ function AnalysisComponent() {
   }, [sample])
 
   const executeSearch = () => {
+    if (searchValue.slice(2)?.length !== 5) {
+      setError('Patient code must have 5 digits. (example: E100004)')
+      return
+    }
+
     navigate({
       search: (prev) => ({ ...prev, q: searchValue || undefined }),
       replace: true,
@@ -154,6 +160,9 @@ function AnalysisComponent() {
             Search
           </Button>
         </div>
+        {error && (
+          <p className="text-sm font-medium text-destructive">{error}</p>
+        )}
       </header>
 
       {q ? (

@@ -49,7 +49,7 @@ export const Route = createFileRoute('/tracking/')({
       })
     }
 
-    if (session?.user.role === 'client' || session?.user.role === 'clinAdmin') {
+    if (session?.user.role === 'client') {
       throw redirect({
         to: '/dashboard',
       })
