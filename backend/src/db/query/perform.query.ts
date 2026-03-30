@@ -1,15 +1,31 @@
 import { db } from "@/db/db";
 import { organization, cases, samples, orders, user } from "@/db/schema";
-import { and, gte, sql, eq, count, isNotNull } from "drizzle-orm";
+import {
+  and,
+  gte,
+  sql,
+  eq,
+  count,
+  isNotNull,
+  asc,
+  desc,
+  lt,
+} from "drizzle-orm";
 
-export const getCasesLast6M = async () => {
+export const getCasesLast1Y = async () => {
   const sixMonthsAgo = new Date();
-  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
+  sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 12);
+
+  const previous = await db
+    .select({ count: count(samples.id) })
+    .from(samples)
+    .leftJoin(orders, eq(orders.id, samples.orderId))
+    .where(lt(orders.orderedAt, sixMonthsAgo));
 
   const data = await db
     .select({
       // 1. Extract the year and month from cases.createdAt
-      rawMonth: sql<Date>`date_trunc('month', ${samples.createdAt})`.as(
+      rawMonth: sql<Date>`date_trunc('month', ${orders.orderedAt})`.as(
         "raw_month",
       ),
 
@@ -17,7 +33,8 @@ export const getCasesLast6M = async () => {
       cases: count(samples.id),
     })
     .from(samples)
-    .where(gte(samples.createdAt, sixMonthsAgo))
+    .leftJoin(orders, eq(orders.id, samples.orderId))
+    .where(gte(orders.orderedAt, sixMonthsAgo))
     .groupBy(sql`raw_month`)
     .orderBy(sql`raw_month`);
 
@@ -26,12 +43,13 @@ export const getCasesLast6M = async () => {
     month: "short", // 'short' gives "Feb", 'long' gives "February"
   });
 
-  return data.map((row) => ({
-    // formatter.format(date) returns "Feb 2025" or "2025 Feb" depending on locale
-    // We can replace the space with a hyphen to get "2025-Feb"
+  const formattedData = data.map((row) => ({
     month: formatter.format(new Date(row.rawMonth)).replace(" ", "-"),
     cases: row.cases,
   }));
+
+  // 4. Return the combined array
+  return [{ month: "previous", cases: previous[0].count }, ...formattedData];
 };
 
 export const getCasesClasses = async () => {
@@ -46,7 +64,8 @@ export const getCasesClasses = async () => {
       count: count(cases.id),
     })
     .from(cases)
-    .groupBy(cases.clinicalStatus);
+    .groupBy(cases.clinicalStatus)
+    .orderBy(desc(cases.clinicalStatus));
 
   return data;
 };

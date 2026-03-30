@@ -114,6 +114,8 @@ function TrackingLotComponent() {
 
   const router = useRouter()
 
+  const blockRole = ['client']
+
   if (!lotFound || !data) {
     return (
       <div className="flex flex-col items-center justify-center min-h-100 space-y-4">
@@ -170,7 +172,7 @@ function TrackingLotComponent() {
 
   const handleRowChange = (
     code: string,
-    field: 'pass' | 'note',
+    field: 'pass' | 'note' | 'updatedAt', // Added updatedAt
     value: any,
   ) => {
     // 2. Update the specific row in the state
@@ -198,12 +200,12 @@ function TrackingLotComponent() {
     })
   }
 
-  const handleUpdate = async (samples: QCSample[] | undefined) => {
+  const handleUpdate = async (samples: QCSample[]) => {
     if (!samples) return
 
-    if (session.user.role === 'client' || session.user.role === 'clinAdmin') {
-      toast.error('You cannot edit tracking data!')
-      return
+    if (blockRole.includes(session.user.role)) {
+      toast.error('You cannot edit tracking data!', { position: 'top-center' })
+      window.location.reload()
     }
 
     const finalSamples = samples.map((item) => {
@@ -212,6 +214,7 @@ function TrackingLotComponent() {
           ...item,
           pass: true,
           note: item.note,
+          updatedAt: item.updatedAt,
         }
       }
 
@@ -226,6 +229,7 @@ function TrackingLotComponent() {
           code: item.code,
           pass: item.pass ?? false,
           note: item.note ?? undefined,
+          date: item.updatedAt ?? null, // Ensure it passes to the backend if needed
         })),
       }
 
@@ -250,20 +254,23 @@ function TrackingLotComponent() {
       setIsDirty(false)
     } catch (error) {
       console.error('Failed to save QC data to the database:', error)
+      window.location.reload()
     }
   }
 
   const handleOpenModal = () => setConfirmCancel(true)
 
-  const executeCancelation = async () => {
+  const executeCancelation = async (reason: string) => {
     setConfirmCancel(false) // Close modal first
 
     try {
-      await cancelOrder({ data: data.id })
+      await cancelOrder({ data: { lotId: data.id, reason: reason } })
+      toast.success('Order canceled successfully', { position: 'top-center' })
       await router.invalidate()
-      console.log('Order canceled successfully')
     } catch (error) {
-      alert('Could not cancel the order. Please try again.')
+      toast.error('Could not cancel the order. Please try again.', {
+        position: 'top-center',
+      })
     }
   }
 
@@ -377,7 +384,7 @@ function TrackingLotComponent() {
               )
             })}
           </CardContent>
-          {!data.canceled && (
+          {!data.canceled && session.user.role === 'superAdmin' && (
             <div className="flex items-center justify-center flex-col space-y-4">
               <Separator className="" />
               <Button
@@ -439,7 +446,9 @@ function TrackingLotComponent() {
                       <TableHead className="w-30">QC Result</TableHead>
                       <TableHead>Note</TableHead>
                       <TableHead className="text-center w-40">
-                        Updated At
+                        {stagesSequence.indexOf(selectedStage.label) === 0
+                          ? 'Ordered Date'
+                          : 'Updated At'}
                       </TableHead>
                     </TableRow>
                   </TableHeader>
@@ -549,11 +558,33 @@ function TrackingLotComponent() {
                             />
                           </TableCell>
 
+                          {/* 3. Conditional Date Editor for Stage Index 0 */}
                           <TableCell className="font-medium">
                             <div className="flex items-center gap-2">
-                              {p.updatedAt
-                                ? formattedDatetime(p.updatedAt)
-                                : '-'}
+                              {stagesSequence.indexOf(selectedStage.label) ===
+                              0 ? (
+                                <Input
+                                  type="datetime-local"
+                                  className="h-8 text-sm w-full"
+                                  value={
+                                    p.updatedAt
+                                      ? new Date(p.updatedAt)
+                                          .toISOString()
+                                          .slice(0, 16)
+                                      : ''
+                                  }
+                                  onChange={(e) => {
+                                    const newVal = e.target.value
+                                      ? new Date(e.target.value).toISOString()
+                                      : null
+                                    handleRowChange(p.code, 'updatedAt', newVal)
+                                  }}
+                                />
+                              ) : p.updatedAt ? (
+                                formattedDatetime(p.updatedAt)
+                              ) : (
+                                '-'
+                              )}
                             </div>
                           </TableCell>
                         </TableRow>
@@ -568,48 +599,49 @@ function TrackingLotComponent() {
               </div>
             )}
           </CardContent>
-          {isEditingMode ? (
-            <div className="flex flex-col gap-4">
-              {/* Note: I removed the <form> wrapper entirely */}
+          {!blockRole.includes(session.user.role) &&
+            (isEditingMode ? (
+              <div className="flex flex-col gap-4">
+                {/* Note: I removed the <form> wrapper entirely */}
 
-              <div className="flex justify-end gap-4 p-4 border-t">
-                {/* 1. Pass All Switch */}
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="pass-all-mode"
-                    checked={isPassAll}
-                    onCheckedChange={(checked) => setIsPassAll(checked)}
-                  />
-                  <Label htmlFor="pass-all-mode">All Samples Pass</Label>
+                <div className="flex justify-end gap-4 p-4 border-t">
+                  {/* 1. Pass All Switch */}
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="pass-all-mode"
+                      checked={isPassAll}
+                      onCheckedChange={(checked) => setIsPassAll(checked)}
+                    />
+                    <Label htmlFor="pass-all-mode">All Samples Pass</Label>
+                  </div>
+
+                  {/* 2. The Save Button */}
+                  <Button
+                    type="button" // <--- CRITICAL: Prevents browser from trying to "submit" a form
+                    onClick={() => handleUpdate(selectedStage.qc?.sample)}
+                    disabled={
+                      !selectedStage.qc?.sample ||
+                      selectedStage.qc.sample.length === 0
+                    }
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    <Database className="w-4 h-4 mr-2" />
+                    Save All to Database
+                  </Button>
                 </div>
-
-                {/* 2. The Save Button */}
+              </div>
+            ) : (
+              <div className="flex justify-end gap-4 p-4 border-t">
                 <Button
-                  type="button" // <--- CRITICAL: Prevents browser from trying to "submit" a form
-                  onClick={() => handleUpdate(selectedStage.qc?.sample)}
-                  disabled={
-                    !selectedStage.qc?.sample ||
-                    selectedStage.qc.sample.length === 0
-                  }
+                  type="button"
+                  onClick={editingState}
                   className="bg-green-600 hover:bg-green-700 text-white"
                 >
-                  <Database className="w-4 h-4 mr-2" />
-                  Save All to Database
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Edit Mode
                 </Button>
               </div>
-            </div>
-          ) : (
-            <div className="flex justify-end gap-4 p-4 border-t">
-              <Button
-                type="button"
-                onClick={editingState}
-                className="bg-green-600 hover:bg-green-700 text-white"
-              >
-                <Pencil className="w-4 h-4 mr-2" />
-                Edit Mode
-              </Button>
-            </div>
-          )}
+            ))}
         </Card>
       </div>
 
@@ -621,7 +653,9 @@ function TrackingLotComponent() {
 
       <CancelOrNot
         isOpen={confirmCancel}
-        onConfirm={executeCancelation}
+        onConfirm={(str) => {
+          executeCancelation(str)
+        }}
         onCancel={() => setConfirmCancel(false)}
       />
     </div>

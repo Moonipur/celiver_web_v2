@@ -59,6 +59,7 @@ import {
 import { Organization, User } from '@/servers/types'
 import { useMutation } from '@tanstack/react-query'
 import { toast } from 'sonner'
+import { DeleteOrNot } from '@/components/WarningCard'
 
 export const Route = createFileRoute('/admin-management')({
   beforeLoad: async () => {
@@ -107,6 +108,24 @@ function AdminDashboardComponent() {
   // User Dialog States
   const [isEditUserDialogOpen, setIsEditUserDialogOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
+
+  const [activeTab, setActiveTab] = useState('users')
+
+  // 2. Create your handler function
+  const handleTabChange = (value: string) => {
+    setActiveTab(value)
+
+    // Add your custom logic here!
+    console.log('Tab changed to:', value)
+    if (value === 'organizations') {
+      // fetch data, reset forms, update URL params, etc.
+    }
+  }
+
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState<{ selectId: string } | null>(
+    null,
+  )
 
   const deleteUserMutation = useMutation({
     mutationFn: DeleteUser,
@@ -253,6 +272,19 @@ function AdminDashboardComponent() {
     }
   }
 
+  const executeDeletion = () => {
+    if (itemToDelete) {
+      if (activeTab === 'users') {
+        handleDeleteUser(itemToDelete.selectId)
+      } else if (activeTab === 'organizations') {
+        handleDeleteOrg(itemToDelete.selectId)
+      }
+    }
+    // Close modal and clear the temporary state
+    setConfirmDelete(false)
+    setItemToDelete(null)
+  }
+
   const roleLabels: Record<string, string> = {
     client: 'Client',
     admin: 'Admin',
@@ -363,7 +395,12 @@ function AdminDashboardComponent() {
         <Button variant="outline">Download Report</Button>
       </div>
 
-      <Tabs defaultValue="users" className="w-full">
+      <Tabs
+        defaultValue="users"
+        className="w-full"
+        value={activeTab}
+        onValueChange={handleTabChange}
+      >
         <TabsList className="grid w-full grid-cols-2 max-w-[400px]">
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="w-4 h-4" /> Users
@@ -456,7 +493,12 @@ function AdminDashboardComponent() {
                           variant="ghost"
                           size="icon"
                           className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                          onClick={() => handleDeleteUser(user.id)}
+                          onClick={() => {
+                            // 1. Save which row we are trying to delete
+                            setItemToDelete({ selectId: user.id })
+                            // 2. Open the confirmation modal
+                            setConfirmDelete(true)
+                          }}
                           title="Delete user"
                         >
                           <Trash2 className="w-4 h-4" />
@@ -597,7 +639,12 @@ function AdminDashboardComponent() {
                           variant="ghost"
                           size="icon"
                           className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                          onClick={() => handleDeleteOrg(org.id)}
+                          onClick={() => {
+                            // 1. Save which row we are trying to delete
+                            setItemToDelete({ selectId: org.id })
+                            // 2. Open the confirmation modal
+                            setConfirmDelete(true)
+                          }}
                         >
                           <Trash2 className="w-4 h-4" />
                         </Button>
@@ -793,6 +840,12 @@ function AdminDashboardComponent() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <DeleteOrNot
+        isOpen={confirmDelete}
+        onConfirm={executeDeletion}
+        onCancel={() => setConfirmDelete(false)}
+      />
     </div>
   )
 }

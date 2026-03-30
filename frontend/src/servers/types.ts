@@ -3,20 +3,20 @@ import axios from 'axios'
 export const api = axios.create({
   baseURL: process.env.BACKEND_URL!,
   withCredentials: true,
-});
+})
 
 export function createHeader() {
   return {
-    "Content-Type": "application/json",
-  };
+    'Content-Type': 'application/json',
+  }
 }
 
 export function createHeaderToken(token: string) {
   return {
     Origin: process.env.FRONTEND_URL!,
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`,
-  };
+  }
 }
 
 type UserRole = 'client' | 'admin' | 'clinAdmin' | 'superAdmin'
@@ -116,9 +116,10 @@ export type CaseResponse = {
 }
 
 export type sampleDupResponse = {
-  caseId: string
-  bCode: string
-  orderId: string
+  caseId: string | undefined
+  bCode: string | undefined
+  orderId: string | undefined
+  found: boolean
 }
 
 export type SampleLot = {
@@ -225,7 +226,12 @@ export type TrackingLot = {
 export type OrderStatusUpdate = {
   lotId: string
   stageLabel: 'shipped' | 'delivered' | 'extracted' | 'distributed' | 'analyzed'
-  qData: { code: string; pass: boolean; note?: string | null | undefined }[]
+  qData: {
+    code: string
+    pass: boolean
+    note?: string | null | undefined
+    date: Date | null
+  }[]
 }
 
 export type SampleForAnalysis = {
@@ -333,12 +339,12 @@ export type ReportSample = {
 export interface PatientRecord {
   id: string
   code: string
-  bcode: string | null
-  visit: string | null
+  bcode: string
+  visit: boolean
   age: number
-  sex: string
-  clinicalStatus: string
-  liverStatus: string
+  sex: 'male' | 'female'
+  clinicalStatus: 'healthy' | 'high-risk' | 'hcc'
+  liverStatus: 'chronic' | 'cirrhosis' 
   etiology: string[]
   addEtiology: string
   note: string

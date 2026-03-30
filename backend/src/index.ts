@@ -13,6 +13,7 @@ import { predict } from "./routes/predict.route";
 import { report } from "./routes/report.route";
 import { perform } from "./routes/perform.route";
 import { admins } from "./routes/admin.route";
+import { getConnInfo } from "hono/bun";
 
 const app = new Hono();
 
@@ -20,8 +21,15 @@ const limiter = rateLimiter({
   windowMs: 15 * 60 * 1000, // 15 minutes
   limit: 500, // Limit each IP to 500 requests per window
   standardHeaders: "draft-7",
-  keyGenerator: (c) =>
-    c.req.header("x-forwarded-for") || c.req.ip || "global-fallback",
+  keyGenerator: (c) => {
+    const info = getConnInfo(c);
+
+    return (
+      c.req.header("x-forwarded-for") ||
+      info.remote.address ||
+      "global-fallback"
+    );
+  },
   // Optional: Custom message when limit is reached
   message: { error: "Too many requests, please try again later." },
 });

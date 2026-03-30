@@ -21,14 +21,16 @@ const config = defineConfig({
   },
   plugins: [
     devtools(),
-    nitro(),
-    // this is the plugin that enables path aliases
     viteTsConfigPaths({
       projects: ['./tsconfig.json'],
     }),
     tailwindcss(),
-    tanstackStart(),
-    viteReact(),
+
+    // --- CRITICAL ORDERING ---
+    tanstackStart(), // 1. Must come before React and Nitro
+    viteReact(), // 2. Standard React transforms
+    nitro(), // 3. Nitro handles the final server bundling
+    // -------------------------
   ],
   optimizeDeps: {
     include: ['react-to-print'],

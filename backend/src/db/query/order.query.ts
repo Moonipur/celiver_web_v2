@@ -11,11 +11,11 @@ export const getOrders = async () => {
 export const getOrderByOrgSlug = async (orgSlug: string) => {
   return await db
     .select({ ...getTableColumns(orders) })
-    .from(member)
-    .innerJoin(organization, eq(member.organizationId, organization.id))
+    .from(orders)
+    .leftJoin(member, eq(member.userId, orders.orderedBy))
+    .leftJoin(organization, eq(member.organizationId, organization.id))
     .where(eq(organization.slug, orgSlug))
-    .leftJoin(orders, eq(member.userId, orders.orderedBy))
-    .orderBy(desc(orders.orderedAt));
+    .orderBy(asc(orders.orderedAt));
 };
 
 export const getOrderByLotId = async (lotId: string) => {

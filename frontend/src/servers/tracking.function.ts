@@ -1,6 +1,9 @@
 import { authMiddleware } from '@/middlewares/auth.middleware'
 import { createServerFn } from '@tanstack/react-start'
-import { TrackingSchema } from '@backend/schemas/tracking.schema'
+import {
+  CancelOrderSchema,
+  TrackingSchema,
+} from '@backend/schemas/tracking.schema'
 import z from 'zod'
 import {
   api,
@@ -62,14 +65,12 @@ export const updateOrderStatus = createServerFn({ method: 'POST' })
 
 export const cancelOrder = createServerFn({ method: 'POST' })
   .middleware([authMiddleware])
-  .inputValidator(z.string().min(12).max(12))
+  .inputValidator(CancelOrderSchema)
   .handler(async ({ context, data }) => {
     try {
-      const lotId = data
-
       const response = await api.post<ApiResponse<TrackingLot>>(
-        `/api/tracking/cancel/${lotId}`,
-        {},
+        `/api/tracking/cancel`,
+        data,
         {
           headers: createHeaderToken(context.session?.session.token),
         },

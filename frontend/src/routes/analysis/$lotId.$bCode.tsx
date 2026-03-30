@@ -1,4 +1,9 @@
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  redirect,
+  useNavigate,
+  useRouter,
+} from '@tanstack/react-router'
 import { FileDropzone } from '@/components/FileDropzone'
 import { useMutation } from '@tanstack/react-query'
 import { useEffect, useState } from 'react'
@@ -42,16 +47,18 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Check, CircleQuestionMark, Loader2, X } from 'lucide-react'
+import { Check, CircleQuestionMark, Loader2, Trash2, X } from 'lucide-react'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Badge } from '@/components/ui/badge'
 import { getSessionFn } from '@/servers/user.functions'
 import { calJensenShanon, checkRunConsistency } from '@/lib/jensen-shannon'
 import { getSampleForPredict } from '@/servers/sample.functions'
-import { getDistByID } from '@/servers/dist.functions'
+import { DeleteDist, getDistByID } from '@/servers/dist.functions'
 import { Input } from '@/components/ui/input'
 import { predictScoreFn } from '@/servers/predict.function'
 import { Bins, FullDistPayload } from '@/servers/types'
+import { toast } from 'sonner'
+import { DeleteOrNot } from '@/components/WarningCard'
 
 const parseFile = (
   file: File,
@@ -182,6 +189,7 @@ export const Route = createFileRoute('/analysis/$lotId/$bCode')({
 })
 
 function AnalysisSampleComponent() {
+  const router = useRouter()
   const navigate = useNavigate()
   const { sample, dists } = Route.useLoaderData()
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
@@ -193,6 +201,11 @@ function AnalysisSampleComponent() {
   const [tableRows, setTableRows] = useState<any[]>([]) // For Table Metadata
   const [qcList, setQcList] = useState<boolean[]>([]) // For QC Badges
   const [numRun, setNumRun] = useState(0) // Total count (DB + Uploaded)
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [itemToDelete, setItemToDelete] = useState<{
+    index: number
+    distId: string | null
+  } | null>(null)
 
   const selectColumnsIndex = [
     4, 11, 17, 23, 29, 35, 41, 47, 53, 59, 65, 71, 77, 83, 89, 95, 101, 107,
@@ -407,7 +420,6 @@ function AnalysisSampleComponent() {
   }, [storageKey])
 
   useEffect(() => {
-    // Only save if we actually have data to prevent overwriting with empty arrays
     if (numRun > 0) {
       const dataToSave = {
         parsedData,
@@ -416,6 +428,11 @@ function AnalysisSampleComponent() {
         numRun,
       }
       localStorage.setItem(storageKey, JSON.stringify(dataToSave))
+    } else {
+      // ADD THIS ELSE BLOCK
+      // If there are no runs left (all deleted), wipe the cache!
+      // Otherwise, the deleted ghost data will return on a page reload.
+      localStorage.removeItem(storageKey)
     }
   }, [parsedData, tableRows, qcList, numRun, storageKey])
 
@@ -479,6 +496,88 @@ function AnalysisSampleComponent() {
       console.error('Failed to save data before prediction:', error)
     },
   })
+
+  const deleteDistMutation = useMutation({
+    mutationFn: DeleteDist,
+    onError: () =>
+      toast.error('Something went wrong', { position: 'top-center' }),
+  })
+
+  // --- Core function to remove a row from UI & re-index everything ---
+  const removeRowLocally = (indexToRemove: number) => {
+    // 1. Remove from table metadata
+    const newTableRows = tableRows.filter((_, i) => i !== indexToRemove)
+    setTableRows(newTableRows)
+
+    // 2. Re-index Chart Data (Shift Run3 to Run2, etc.)
+    const newParsedData = parsedData.map((binObj) => {
+      const newBin: any = { xaxis: binObj.xaxis }
+      let newRunIndex = 1
+
+      for (let i = 1; i <= numRun; i++) {
+        if (i - 1 === indexToRemove) continue // Skip the deleted run
+        newBin[`Run${newRunIndex}`] = binObj[`Run${i}`]
+        newRunIndex++
+      }
+      return newBin
+    })
+    setParsedData(newParsedData)
+
+    // 3. Recalculate QC based on the new matrix
+    if (newParsedData.length > 0) {
+      const { labels, matrix } = calJensenShanon(newParsedData)
+      const test = checkRunConsistency(labels, matrix)
+      setQcList(
+        Array.from(
+          { length: newTableRows.length },
+          (_, i) => test[`Run${i + 1}`] ?? false,
+        ),
+      )
+    } else {
+      setQcList([]) // Clear if no runs left
+    }
+
+    // 4. Update the total run count
+    setNumRun(newTableRows.length)
+  }
+
+  // --- Handlers for Organization Management ---
+  const handleDeleteDist = (index: number, distId: string | null) => {
+    if (distId) {
+      // Record exists in DB, delete it from the server first
+      deleteDistMutation.mutate(
+        { data: distId },
+        {
+          onSuccess: (res) => {
+            console.log(res)
+            if (res.success) {
+              toast.success('Distribution deleted', { position: 'top-center' })
+              removeRowLocally(index) // Update UI instantly
+              router.invalidate() // Sync router context
+            } else {
+              toast.error('Failed to delete distribution!', {
+                position: 'top-center',
+              })
+            }
+          },
+        },
+      )
+    } else {
+      // It's a freshly uploaded file not yet in the DB. Just remove locally.
+      removeRowLocally(index)
+      toast.success('Local distribution removed', { position: 'top-center' })
+    }
+  }
+
+  const executeDeletion = () => {
+    if (itemToDelete) {
+      // Run your actual delete logic
+      handleDeleteDist(itemToDelete.index, itemToDelete.distId)
+    }
+    // Close modal and clear the temporary state
+    setConfirmDelete(false)
+    setItemToDelete(null)
+  }
 
   return (
     <div className="max-w-7xl p-6 mx-auto space-y-6">
@@ -628,6 +727,7 @@ function AnalysisSampleComponent() {
                         Decision
                       </TableHead>
                       <TableHead className="w-60">Note</TableHead>
+                      <TableHead className="text-right">Action</TableHead>
                     </TableRow>
                   </TableHeader>
 
@@ -722,6 +822,24 @@ function AnalysisSampleComponent() {
                               placeholder={!row.note ? '-' : row.note}
                             />
                           </TableCell>
+                          <TableCell className="text-right space-x-2">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                              onClick={() => {
+                                setItemToDelete({
+                                  index: i,
+                                  distId: row.distId,
+                                })
+                                // 2. Open the confirmation modal
+                                setConfirmDelete(true)
+                              }}
+                              title="Delete user"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </Button>
+                          </TableCell>
                         </TableRow>
                       )
                     })}
@@ -730,13 +848,13 @@ function AnalysisSampleComponent() {
               </div>
             </CardContent>
 
-            {parsedData.length > 0 && (
+            {numRun > 0 && (
               <div className="flex items-center justify-center">
                 <Button
                   key={'predict_btn'}
                   className="max-w-40 bg-purple-300 hover:bg-purple-400 flex items-center gap-2"
                   variant={'outline'}
-                  disabled={isProcessing}
+                  disabled={isProcessing || numRun < 2}
                   onClick={() => handlePredict()}
                 >
                   {isProcessing ? (
@@ -753,6 +871,12 @@ function AnalysisSampleComponent() {
           </Card>
         </div>
       </div>
+
+      <DeleteOrNot
+        isOpen={confirmDelete}
+        onConfirm={executeDeletion}
+        onCancel={() => setConfirmDelete(false)}
+      />
     </div>
   )
 }

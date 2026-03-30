@@ -25,7 +25,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { UserPlus, Trash2, Edit2, X, Database } from 'lucide-react'
+import {
+  UserPlus,
+  Trash2,
+  Edit2,
+  X,
+  Database,
+  BadgeXIcon,
+  BadgeCheckIcon,
+} from 'lucide-react'
 import { DiseaseTagInput } from '@/components/DiseaseTagInput'
 import { addOrders } from '@/servers/order.functions'
 import { getLatestCase } from '@/servers/case.functions'
@@ -128,31 +136,31 @@ function RouteComponent() {
     if (!editingId) {
       // --- ADD NEW LOGIC ---
       const caseDup = await checkSampleDup({ data: currentCode.toUpperCase() })
+
       if (!caseDup.success) return
 
       let caseId: string | null
       let bCodeNum: string
-      let visitNum: number = caseDup.visit + 1
 
-      if (typeof caseDup.bCode === 'string' && caseDup.bCode !== 'never') {
-        bCodeNum = formatCode(caseDup.bCode, 2)
-      } else {
+      if (caseDup.visit === false || caseDup.bCode === undefined) {
         const nextSequenceValue = currentBCode + 1
         setCurrentBCode(nextSequenceValue)
-        bCodeNum = numToString(session?.org.bCode as string, nextSequenceValue)
+        bCodeNum = numToString(session.org.bCode, nextSequenceValue)
+      } else {
+        bCodeNum = formatCode(caseDup.bCode as string, 2)
       }
 
-      caseId = caseDup.caseId
+      caseId = caseDup.caseId === undefined ? null : caseDup.caseId
 
       const newPatient: PatientRecord = {
         id: caseId === null ? crypto.randomUUID() : caseId,
         code: currentCode.toUpperCase(),
         bcode: bCodeNum,
-        visit: `V${visitNum}`,
+        visit: caseDup.visit,
         age: Number(currentAge),
-        sex: currentSex,
-        clinicalStatus: currentClinical, // from Select
-        liverStatus: currentLiver, // from Radio
+        sex: currentSex as 'male' | 'female',
+        clinicalStatus: currentClinical as 'healthy' | 'high-risk' | 'hcc', // from Select
+        liverStatus: currentLiver as 'chronic' | 'cirrhosis', // from Radio
         etiology: currentEtiology, // from Checkboxes (Array)
         addEtiology: additionalEtiology,
         note: currentNote,
@@ -168,9 +176,12 @@ function RouteComponent() {
                 ...p,
                 code: currentCode.toUpperCase(),
                 age: Number(currentAge),
-                sex: currentSex,
-                clinicalStatus: currentClinical,
-                liverStatus: currentLiver,
+                sex: currentSex as 'male' | 'female',
+                clinicalStatus: currentClinical as
+                  | 'healthy'
+                  | 'high-risk'
+                  | 'hcc',
+                liverStatus: currentLiver as 'chronic' | 'cirrhosis',
                 etiology: currentEtiology,
                 addEtiology: additionalEtiology,
                 note: currentNote,
@@ -189,8 +200,10 @@ function RouteComponent() {
     setEditingId(patient.id)
     setCurrentCode(patient.code)
     setCurrentAge(patient.age.toString())
-    setCurrentSex(patient.sex)
-    setCurrentClinical(patient.clinicalStatus)
+    setCurrentSex(patient.sex as 'male' | 'female')
+    setCurrentClinical(
+      patient.clinicalStatus as 'healthy' | 'high-risk' | 'hcc',
+    )
     setCurrentLiver(patient.liverStatus)
     setCurrentEtiology(Array.isArray(patient.etiology) ? patient.etiology : [])
     setAdditionalEtiology(patient.addEtiology || '')
@@ -218,16 +231,20 @@ function RouteComponent() {
       const payload = patients.map((p) => {
         // 2. Add the current index + 1 to the starting number
         return {
-          caseId: p.id,
-          hospitalId: session?.org.id,
+          caseId: p.id ?? null,
+          hospitalId: session.org.id,
           hospitalCode: p.code.replace('-', ''),
           biobankCode: p.bcode?.replace('-', ''),
-          visit: p.visit !== null ? stringToNum(p?.visit, 1) : null,
+          visit: p.visit,
           age: p.age,
-          sex: p.sex,
-          clinicalStatus: p.clinicalStatus.toLowerCase(),
-          liverStatus:
-            p.liverStatus.toLowerCase() === '' ? null : p.liverStatus,
+          sex: p.sex as 'male' | 'female',
+          clinicalStatus: p.clinicalStatus.toLowerCase() as
+            | 'healthy'
+            | 'high-risk'
+            | 'hcc',
+          liverStatus: (p.liverStatus.toLowerCase() === ''
+            ? null
+            : p.liverStatus.toLowerCase()) as 'chronic' | 'cirrhosis',
           etiology: p.etiology,
           additionalEtiology:
             p.addEtiology && p.addEtiology.trim() !== ''
@@ -309,7 +326,6 @@ function RouteComponent() {
                 <SelectContent>
                   <SelectItem value="male">Male</SelectItem>
                   <SelectItem value="female">Female</SelectItem>
-                  <SelectItem value="unknown">Unknown</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -438,7 +454,7 @@ function RouteComponent() {
               <TableRow>
                 <TableHead className="w-25">Code</TableHead>
                 <TableHead className="w-25 text-center">Biobank</TableHead>
-                <TableHead className="w-15 text-center">Visit</TableHead>
+                <TableHead className="w-15 text-center">Existing</TableHead>
                 <TableHead className="w-15 text-center">Age</TableHead>
                 <TableHead className="w-15 text-center">Sex</TableHead>
                 <TableHead className="w-30 text-center">
@@ -459,7 +475,13 @@ function RouteComponent() {
                 >
                   <TableCell className="font-bold">{p.code}</TableCell>
                   <TableCell className="text-center">{p.bcode}</TableCell>
-                  <TableCell className="text-center">{p.visit}</TableCell>
+                  <TableCell className="flex justify-center items-center mt-1.5 ">
+                    {p.visit ? (
+                      <BadgeCheckIcon className="text-green-600 fill-green-100" />
+                    ) : (
+                      <BadgeXIcon className="text-red-500 fill-red-100" />
+                    )}
+                  </TableCell>
                   <TableCell className="text-center">{p.age}</TableCell>
                   <TableCell className="text-center capitalize">
                     {p.sex}

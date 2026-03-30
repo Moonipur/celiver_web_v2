@@ -2,15 +2,20 @@ import { Hono } from "hono";
 import { authMiddleware } from "@/middlewares/auth.middleware";
 import type { HonoEnv } from "@/types";
 import { clientRoleMiddleware } from "@/middlewares/role.middleware";
-import { getOrderByLotId, getOrders } from "@/db/query/order.query";
 import {
-  getOneSample,
-  getSampleByOrderId,
-} from "@/db/query/sample.query";
+  getOrderByLotId,
+  getOrderByOrgSlug,
+  getOrders,
+} from "@/db/query/order.query";
+import { getOneSample, getSampleByOrderId } from "@/db/query/sample.query";
 import { getMember } from "@/db/query/org.query";
 import { StatusClassify, TrackingStatus } from "@/lib/utils";
-import { TrackingUpdateValidator } from "@/validators/tracking.validator";
 import {
+  CancelOrderValidator,
+  TrackingUpdateValidator,
+} from "@/validators/tracking.validator";
+import {
+  cancelAnalyzed,
   canceledLot,
   updateAnalyzed,
   updateDelivered,
@@ -24,11 +29,19 @@ export const tracking = new Hono<HonoEnv>();
 tracking.use(authMiddleware);
 
 tracking.get("/", clientRoleMiddleware, async (c) => {
+  const user = c.get("user");
+
   try {
-    const orderList = await getOrders();
+    const userOrg = await getMember(user.id);
+    const orderList =
+      user.role === "admin" || user.role === "superAdmin"
+        ? await getOrders()
+        : await getOrderByOrgSlug(userOrg.hCode);
+
     const track = await Promise.all(
       orderList.map(async (item) => {
         const org = await getMember(item.orderedBy!);
+
         const sampleList = await getSampleByOrderId(item.id);
 
         return {
@@ -130,7 +143,7 @@ tracking.post(
           const sample = await getOneSample(lot.id, item.code);
 
           if (newData.stageLabel == "shipped") {
-            await updateShipped(user.id, sample.id, item.note);
+            await updateShipped(user.id, sample.id, item.note, item.date);
           } else if (newData.stageLabel == "delivered") {
             await updateDelivered(user.id, sample.id, item.pass, item.note);
           } else if (newData.stageLabel == "extracted") {
@@ -151,18 +164,33 @@ tracking.post(
   },
 );
 
-tracking.post("/cancel/:lotId", clientRoleMiddleware, async (c) => {
-  const user = c.get("user");
-  const { lotId } = c.req.param();
+tracking.post(
+  "/cancel",
+  clientRoleMiddleware,
+  CancelOrderValidator,
+  async (c) => {
+    const user = c.get("user");
+    const cancelData = c.req.valid("json");
 
-  try {
-    // Perform the database update
-    await canceledLot(user.id, lotId);
+    try {
+      // Perform the database update
+      const orderData = await canceledLot(
+        user.id,
+        cancelData.lotId,
+        cancelData.reason,
+      );
 
-    // FIX: Return a success response
-    return c.json({ message: "Order canceled successfully" }, 200);
-  } catch (error) {
-    console.error("Error to cancel order: ", error);
-    return c.json({ error: "Failed to cancel order" }, 500);
-  }
-});
+      await cancelAnalyzed(
+        user.id,
+        orderData,
+        `Canceled (${cancelData.reason})`,
+      );
+
+      // FIX: Return a success response
+      return c.json({ message: "Order canceled successfully" }, 200);
+    } catch (error) {
+      console.error("Error to cancel order: ", error);
+      return c.json({ error: "Failed to cancel order" }, 500);
+    }
+  },
+);

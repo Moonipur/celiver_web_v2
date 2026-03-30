@@ -3,7 +3,7 @@ import { authMiddleware } from "@/middlewares/auth.middleware";
 import type { HonoEnv } from "@/types";
 import {
   getCasesClasses,
-  getCasesLast6M,
+  getCasesLast1Y,
   getModelPerformance,
 } from "@/db/query/perform.query";
 
@@ -14,7 +14,7 @@ perform.use(authMiddleware);
 perform.get("/", async (c) => {
   try {
     // Get Case Count in Each Month
-    const cases6M = await getCasesLast6M();
+    const cases6M = await getCasesLast1Y();
 
     // Get Case Count in Each Class
     const casesClasses = await getCasesClasses();

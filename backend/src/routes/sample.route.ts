@@ -102,7 +102,22 @@ samples.get("/dup/:hCode", async (c) => {
   try {
     const samplesList = await getDupSample(hCode);
 
-    return c.json({ message: "Fetched samples successful", body: samplesList });
+    if (samplesList === undefined) {
+      return c.json({
+        message: "Fetched samples successful",
+        body: {
+          caseId: undefined,
+          bCode: undefined,
+          orderId: undefined,
+          found: false,
+        },
+      });
+    }
+
+    return c.json({
+      message: "Fetched samples successful",
+      body: { ...samplesList, found: true },
+    });
   } catch (error) {
     console.error("Error fetching samples: ", error);
     return c.json({ error: "Failed to fetch samples" }, 500);

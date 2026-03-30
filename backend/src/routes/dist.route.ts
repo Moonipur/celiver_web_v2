@@ -140,9 +140,9 @@ dists.delete("/delete/:distId", clientRoleMiddleware, async (c) => {
   try {
     await deleteDistById(distId);
 
-    return c.json({ message: "Deleted dist successful" }, 201);
+    return c.json({ message: "Deleted dist successful", body: true }, 201);
   } catch (error) {
     console.error("Error deleting dist: ", error);
-    return c.json({ error: "Failed to delete dist" }, 500);
+    return c.json({ error: "Failed to delete dist", body: false }, 500);
   }
 });

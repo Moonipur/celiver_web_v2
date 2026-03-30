@@ -192,7 +192,7 @@ function ReportComponent() {
                   <TableHeader className="bg-muted/50">
                     <TableRow>
                       <TableHead>Lot ID</TableHead>
-                      <TableHead className="text-center">Visit</TableHead>
+                      {/* <TableHead className="text-center">Visit</TableHead> */}
                       <TableHead className="text-center">
                         Ordered Date
                       </TableHead>
@@ -232,9 +232,9 @@ function ReportComponent() {
                         </TableCell>
 
                         {/* Example: Visit (Read-only vs Input) */}
-                        <TableCell className="italic text-sm text-muted-foreground text-center">
+                        {/* <TableCell className="italic text-sm text-muted-foreground text-center">
                           V{row.visit}
-                        </TableCell>
+                        </TableCell> */}
 
                         <TableCell className="italic text-sm text-muted-foreground text-center">
                           {formattedDatetime(row.orderDate)}

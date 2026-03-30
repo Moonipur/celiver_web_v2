@@ -53,8 +53,8 @@ export const CasesArraySchema = z.array(NewCaseSchema);
 
 export const CasesArrVisitSchema = z.array(
   NewCaseSchema.extend({
-    caseId: z.uuid(),
-    visit: z.int().min(1),
+    caseId: z.string().nullable(),
+    visit: z.boolean(),
     note: z.string().optional().nullable(),
   }),
 );

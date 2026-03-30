@@ -21,7 +21,6 @@ import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart'
 import { TrendingUp, Target, Activity } from 'lucide-react'
 import { getSessionFn } from '@/servers/user.functions'
 import { DashboardMatrix } from '@/servers/perform.function'
-import { formatNumber } from '@/lib/utils'
 
 export const Route = createFileRoute('/dashboard')({
   beforeLoad: async () => {
@@ -89,8 +88,8 @@ function DashboardComponent() {
     0,
   )
 
-  let cumulativeSum = 0
-  const processedChartData = matrix.data.caseCount.map((item) => {
+  let cumulativeSum = matrix.data.caseCount[0].cases
+  const processedChartData = matrix.data.caseCount.slice(1).map((item) => {
     cumulativeSum += item.cases
     return {
       ...item,

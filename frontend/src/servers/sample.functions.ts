@@ -12,6 +12,7 @@ import z from 'zod'
 import { authMiddleware } from '@/middlewares/auth.middleware'
 
 export const checkSampleDup = createServerFn({ method: 'POST' })
+  .middleware([authMiddleware])
   .inputValidator(
     z
       .string()
@@ -19,28 +20,25 @@ export const checkSampleDup = createServerFn({ method: 'POST' })
       .max(9)
       .transform((str) => str.replace('-', '')),
   )
-  .handler(async ({ data }) => {
+  .handler(async ({ context, data }) => {
     try {
-      const token = getCookie('token')
-
-      if (!token) return { success: false, message: 'No token found' }
-
       try {
-        const sampleDupResponse = await api.get<
-          ApiResponse<sampleDupResponse[]>
-        >(`/api/samples/dup/${data}`, {
-          headers: createHeaderToken(token),
-        })
+        const sampleDupResponse = await api.get<ApiResponse<sampleDupResponse>>(
+          `/api/samples/dup/${data}`,
+          {
+            headers: createHeaderToken(context.session?.session.token),
+          },
+        )
 
         if (
           sampleDupResponse.data?.body &&
-          sampleDupResponse.data?.body.length >= 1
+          sampleDupResponse.data?.body.found
         ) {
           return {
             success: true,
-            caseId: sampleDupResponse.data?.body[0].caseId,
-            bCode: sampleDupResponse.data?.body[0].bCode,
-            visit: sampleDupResponse.data?.body.length,
+            caseId: sampleDupResponse.data?.body.caseId,
+            bCode: sampleDupResponse.data?.body.bCode,
+            visit: sampleDupResponse.data?.body.found,
           }
         }
 
@@ -48,7 +46,7 @@ export const checkSampleDup = createServerFn({ method: 'POST' })
           success: true,
           caseId: null,
           bCode: 'never',
-          visit: 0,
+          visit: false,
         }
       } catch (err) {
         // If 404, it just means there are no cases yet. Don't crash!
@@ -57,7 +55,7 @@ export const checkSampleDup = createServerFn({ method: 'POST' })
             success: true,
             caseId: null,
             bCode: 'never',
-            visit: 0,
+            visit: false,
           }
         }
         throw err // Rethrow other actual errors (500, etc)
@@ -71,7 +69,7 @@ export const checkSampleDup = createServerFn({ method: 'POST' })
         success: true,
         caseId: null,
         bCode: 'never',
-        visit: 0,
+        visit: false,
       }
     }
   })

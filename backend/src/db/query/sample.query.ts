@@ -7,7 +7,7 @@ import {
   UpdateSample,
 } from "@/types";
 import { organization, cases, samples, orders, user } from "@/db/schema";
-import { and, asc, desc, eq, getTableColumns } from "drizzle-orm";
+import { and, asc, desc, eq, getTableColumns, notLike } from "drizzle-orm";
 
 export const getSamples = async () => {
   return await db
@@ -29,7 +29,7 @@ export const getSampleByOrderId = async (orderId: string) => {
     .innerJoin(cases, eq(samples.caseId, cases.id))
     .innerJoin(orders, eq(samples.orderId, orders.id))
     .where(eq(orders.id, orderId))
-    .orderBy(desc(samples.createdAt));
+    .orderBy(asc(cases.biobankCode));
 };
 
 export type SampleListType = Awaited<ReturnType<typeof getSampleByOrderId>>;
@@ -64,7 +64,7 @@ export const getSampleByOrgSlug = async (orgSlug: string) => {
     .innerJoin(cases, eq(samples.caseId, cases.id))
     .leftJoin(organization, eq(cases.hospitalId, organization.id))
     .where(eq(organization.slug, orgSlug))
-    .orderBy(asc(cases.hospitalCode));
+    .orderBy(asc(samples.createdAt));
 };
 
 export const getOneSample = async (orderId: string, bCode: string) => {
@@ -101,7 +101,7 @@ export const getSampleByLotNBcode = async (lotId: string, bCode: string) => {
 };
 
 export const getDupSample = async (hCode: string) => {
-  const casesList = await db
+  const [casesList] = await db
     .select({
       caseId: cases.id,
       bCode: cases.biobankCode,
@@ -109,7 +109,8 @@ export const getDupSample = async (hCode: string) => {
     })
     .from(samples)
     .innerJoin(cases, eq(samples.caseId, cases.id))
-    .where(eq(cases.hospitalCode, hCode));
+    .where(eq(cases.hospitalCode, hCode))
+    .limit(1);
 
   return casesList;
 };
