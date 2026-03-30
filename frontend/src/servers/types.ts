@@ -1,22 +1,22 @@
 import axios from 'axios'
 
 export const api = axios.create({
-  baseURL: 'http://localhost:8000',
+  baseURL: process.env.BACKEND_URL!,
   withCredentials: true,
-})
+});
 
 export function createHeader() {
   return {
-    'Content-Type': 'application/json',
-  }
+    "Content-Type": "application/json",
+  };
 }
 
 export function createHeaderToken(token: string) {
   return {
-    Origin: 'http://localhost:3000',
-    'Content-Type': 'application/json',
+    Origin: process.env.FRONTEND_URL!,
+    "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
-  }
+  };
 }
 
 type UserRole = 'client' | 'admin' | 'clinAdmin' | 'superAdmin'
