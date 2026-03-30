@@ -49,8 +49,6 @@ tracking.get("/", clientRoleMiddleware, async (c) => {
       }),
     );
 
-    const track = await Promise.all(trackPromises);
-
     return c.json({ message: "Fetched orders successful", body: track });
   } catch (error) {
     console.error("Error fetching orders: ", error);
