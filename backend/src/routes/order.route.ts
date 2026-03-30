@@ -106,12 +106,12 @@ orders.post("/notify", clientRoleMiddleware, NotifyValidator, async (c) => {
 
   try {
     // Await the result so you actually know if it worked
-    // const result = await sendTelegram(
-    //   notifyData.lotId,
-    //   notifyData.orgSlug,
-    //   new Date(notifyData.date), // Ensure string is cast back to Date
-    //   notifyData.cases,
-    // );
+    const result = await sendTelegram(
+      notifyData.lotId,
+      notifyData.orgSlug,
+      new Date(notifyData.date), // Ensure string is cast back to Date
+      notifyData.cases,
+    );
 
     if (!result.ok) {
       console.error("Telegram API rejected message:", result);
