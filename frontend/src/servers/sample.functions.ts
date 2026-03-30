@@ -1,5 +1,4 @@
 import { createServerFn } from '@tanstack/react-start'
-import { getCookie } from '@tanstack/react-start/server'
 import axios from 'axios'
 import {
   api,
